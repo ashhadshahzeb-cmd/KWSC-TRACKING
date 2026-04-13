@@ -41,6 +41,8 @@ const categories = [
     id: "book-section",
     label: "Book Section",
     items: [
+      { to: "/book-section/bill-dispatch", label: "Bill Dispatch" },
+      { to: "/book-section/file-tracking", label: "File Tracking" },
       { to: "/book-section/emp-details", label: "Emp Details" },
       { to: "/book-section/medical", label: "Medical" },
       { to: "/book-section/contractor", label: "Contractor" },

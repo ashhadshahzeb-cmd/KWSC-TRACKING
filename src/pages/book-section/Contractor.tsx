@@ -5,9 +5,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { Briefcase, FileText, Calculator, Search, Save, RotateCcw, ShieldCheck, Loader2 } from "lucide-react";
+import { Briefcase, FileText, Calculator, Search, Save, RotateCcw, ShieldCheck, Loader2, FileImage, ExternalLink } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useVoice } from "@/contexts/VoiceContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -16,7 +16,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 export default function Contractor() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { openModal, formData, setOpenModal } = useVoice();
+  const navState = location.state as any;
   
   // Records State
   const [records, setRecords] = useState<any[]>([]);
@@ -42,6 +44,8 @@ export default function Contractor() {
   const [paymentDate, setPaymentDate] = useState("");
   const [workDescription, setWorkDescription] = useState("");
   const [vendorType, setVendorType] = useState("");
+  const [scanUrl, setScanUrl] = useState<string | null>(null);
+  const [trackingId, setTrackingId] = useState<string | null>(null);
 
   // Search State
   const [searchQuery, setSearchQuery] = useState("");
@@ -74,6 +78,21 @@ export default function Contractor() {
 
   useEffect(() => {
     fetchRecords();
+
+    // Check if data is coming from Bill Dispatch (navState)
+    if (navState) {
+        if (navState.contractorName) setContractorName(navState.contractorName);
+        if (navState.grossAmount) setGrossAmount(navState.grossAmount.toString());
+        if (navState.voucherNo) setVoucherNo(navState.voucherNo);
+        if (navState.partyCode) setPartyCode(navState.partyCode);
+        if (navState.workDescription) setWorkDescription(navState.workDescription);
+        if (navState.scanUrl) setScanUrl(navState.scanUrl);
+        if (navState.trackingId) setTrackingId(navState.trackingId);
+        toast.success("Data & Scan imported from Bill Dispatch");
+        // Clear history state
+        window.history.replaceState({}, document.title);
+    }
+
     if (openModal === 'contractor') {
       if (formData.name) setContractorName(formData.name);
       if (formData.amount) setGrossAmount(formData.amount.toString());
@@ -81,13 +100,14 @@ export default function Contractor() {
       if (formData.voucher) setVoucherNo(formData.voucher);
       setOpenModal(null);
     }
-  }, [openModal, formData, setOpenModal]);
+  }, [openModal, formData, setOpenModal, navState]);
 
   const handleReset = (silent = false) => {
     setBudgetYear("");
     setBudgetHead("");
     setPmrVoucher("");
     setContractorName("");
+    setScanUrl(null);
     setPartyCode("");
     setCityTown("");
     setVoucherNo("");
@@ -221,6 +241,19 @@ export default function Contractor() {
         <div>
           <h1 className="text-2xl font-bold italic tracking-tight text-white/90">Contractor Billings</h1>
           <p className="text-sm text-muted-foreground italic">Manage financial records for service and construction contractors</p>
+          {trackingId && (
+            <div className="mt-2 flex items-center gap-2">
+               <span className="text-[10px] font-bold bg-primary/20 text-primary px-2 py-0.5 rounded-md border border-primary/20">TRACKING: {trackingId}</span>
+               <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-6 text-[10px] gap-1 hover:text-primary p-0 text-muted-foreground"
+                onClick={() => navigate('/book-section/file-tracking', { state: { bill: { tracking_id: trackingId, diary_no: voucherNo, party_name: contractorName } } })}
+               >
+                 <Search className="w-3 h-3" /> View Journey
+                </Button>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={() => handleReset()} className="gap-2 border-primary/20 hover:bg-primary/5">
@@ -432,6 +465,28 @@ export default function Contractor() {
               </Button>
             </CardContent>
           </Card>
+
+          {/* Scanned Bill Preview Section */}
+          {scanUrl && (
+            <Card className="glass-card overflow-hidden border-none bg-primary/5 group shadow-inner">
+               <CardHeader className="py-2.5 border-b border-primary/10">
+                  <CardTitle className="text-[10px] font-black tracking-widest flex items-center gap-2 text-primary uppercase italic">
+                    <FileImage className="w-3.5 h-3.5" /> Digitzed Document Preview
+                  </CardTitle>
+               </CardHeader>
+               <CardContent className="p-0 relative overflow-hidden aspect-[3/4]">
+                  <img src={scanUrl} alt="Bill Scan" className="w-full h-full object-contain bg-zinc-950" />
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                     <a href={scanUrl} target="_blank" rel="noreferrer" className="flex flex-col items-center gap-2">
+                        <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white shadow-xl scale-90 group-hover:scale-100 transition-transform">
+                           <ExternalLink className="w-5 h-5" />
+                        </div>
+                        <span className="text-white text-[10px] font-black uppercase tracking-[0.2em]">Launch Viewer</span>
+                     </a>
+                  </div>
+               </CardContent>
+            </Card>
+          )}
         </div>
       </div>
 

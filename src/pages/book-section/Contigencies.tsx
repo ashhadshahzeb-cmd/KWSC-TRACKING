@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AlertCircle, FileText, Calculator, Search, Save, RotateCcw, Trash2, ShieldCheck, Receipt, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -15,6 +15,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 export default function Contigencies() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const navState = location.state as any;
   
   // Records State
   const [records, setRecords] = useState<any[]>([]);
@@ -49,7 +51,19 @@ export default function Contigencies() {
 
   useEffect(() => {
     fetchRecords();
-  }, []);
+
+    // Check if data is coming from Bill Dispatch (navState)
+    if (navState) {
+        if (navState.vendorName || navState.contractorName) setVendorName(navState.vendorName || navState.contractorName);
+        if (navState.grossAmount) setGrossAmount(navState.grossAmount.toString());
+        if (navState.voucherNo) setVoucherNo(navState.voucherNo);
+        if (navState.partyCode) setPartyCode(navState.partyCode);
+        if (navState.workDescription) setDescription(navState.workDescription);
+        toast.success("Data imported from Bill Dispatch");
+        // Clear history state
+        window.history.replaceState({}, document.title);
+    }
+  }, [navState]);
 
   const [vendorType, setVendorType] = useState("contingencies");
 

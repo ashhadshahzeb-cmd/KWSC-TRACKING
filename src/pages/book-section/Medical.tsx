@@ -4,9 +4,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Stethoscope, Calculator, Receipt, Search, Save, RotateCcw, Trash2, Loader2 } from "lucide-react";
+import { Stethoscope, Calculator, Receipt, Search, Save, RotateCcw, Trash2, Loader2, FileImage, ImageIcon, ExternalLink } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useVoice } from "@/contexts/VoiceContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -15,7 +15,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 export default function Medical() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { openModal, formData, setOpenModal } = useVoice();
+  const navState = location.state as any;
   
   // Records State
   const [records, setRecords] = useState<any[]>([]);
@@ -36,6 +38,8 @@ export default function Medical() {
   const [billPassedOn, setBillPassedOn] = useState("");
   const [paymentDate, setPaymentDate] = useState("");
   const [vendorType, setVendorType] = useState("medical");
+  const [scanUrl, setScanUrl] = useState<string | null>(null);
+  const [trackingId, setTrackingId] = useState<string | null>(null);
 
   // Search State
   const [searchQuery, setSearchQuery] = useState("");
@@ -64,12 +68,26 @@ export default function Medical() {
 
   useEffect(() => {
     fetchRecords();
+    
+    // Check if data is coming from Bill Dispatch (navState)
+    if (navState) {
+        if (navState.vendorName) setVendorName(navState.vendorName);
+        if (navState.grossAmount) setGrossAmount(navState.grossAmount.toString());
+        if (navState.voucherNo) setVoucherNo(navState.voucherNo);
+        if (navState.partyCode) setPartyCode(navState.partyCode);
+        if (navState.scanUrl) setScanUrl(navState.scanUrl);
+        if (navState.trackingId) setTrackingId(navState.trackingId);
+        toast.success("Data & Scan imported from Bill Dispatch");
+        // Clear history state to avoid re-triggering on refresh
+        window.history.replaceState({}, document.title);
+    }
+
     if (openModal === 'medical') {
       if (formData.amount) setGrossAmount(formData.amount.toString());
       if (formData.name) setVendorName(formData.name);
       setOpenModal(null); // clear after filling
     }
-  }, [openModal, formData, setOpenModal]);
+  }, [openModal, formData, setOpenModal, navState]);
 
   const handleReset = (silent = false) => {
     setBudgetYear("");
@@ -77,6 +95,7 @@ export default function Medical() {
     setPmrVoucher("");
     setVendorName("");
     setHospitalName("");
+    setScanUrl(null);
     setPartyCode("");
     setVoucherNo("");
     setChequeNo("");
@@ -195,6 +214,19 @@ export default function Medical() {
         <div>
           <h1 className="text-2xl font-bold">Medical Billings</h1>
           <p className="text-sm text-muted-foreground">Process medical expense claims and vendor payments</p>
+          {trackingId && (
+            <div className="mt-2 flex items-center gap-2">
+               <span className="text-[10px] font-bold bg-primary/20 text-primary px-2 py-0.5 rounded-md border border-primary/20">TRACKING: {trackingId}</span>
+               <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-6 text-[10px] gap-1 hover:text-primary p-0"
+                onClick={() => navigate('/book-section/file-tracking', { state: { bill: { tracking_id: trackingId, diary_no: voucherNo, party_name: vendorName } } })}
+               >
+                 <Search className="w-3 h-3" /> View Journey
+                </Button>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={() => handleReset()} className="gap-2">
@@ -382,6 +414,28 @@ export default function Medical() {
               </Button>
             </CardContent>
           </Card>
+
+          {/* Scanned Bill Preview Section */}
+          {scanUrl && (
+            <Card className="glass-card overflow-hidden border-none bg-primary/5 group">
+               <CardHeader className="py-3 border-b border-primary/10">
+                  <CardTitle className="text-xs font-bold flex items-center gap-2 text-primary uppercase">
+                    <FileImage className="w-4 h-4" /> Physical Scan Attachment
+                  </CardTitle>
+               </CardHeader>
+               <CardContent className="p-0 relative overflow-hidden aspect-[3/4]">
+                  <img src={scanUrl} alt="Bill Scan" className="w-full h-full object-contain bg-zinc-900" />
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                     <a href={scanUrl} target="_blank" rel="noreferrer" className="flex flex-col items-center gap-2">
+                        <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white shadow-xl scale-90 group-hover:scale-100 transition-transform">
+                           <ExternalLink className="w-6 h-6" />
+                        </div>
+                        <span className="text-white text-xs font-bold uppercase tracking-widest">View Original</span>
+                     </a>
+                  </div>
+               </CardContent>
+            </Card>
+          )}
         </div>
       </div>
 

@@ -23,6 +23,8 @@ import SecurityDeposit from "./pages/book-section/SecurityDeposit";
 import PolBills from "./pages/book-section/PolBills";
 import Contigencies from "./pages/book-section/Contigencies";
 import ChequeRecord from "./pages/book-section/ChequeRecord";
+import BillDispatch from "./pages/book-section/BillDispatch";
+import FileTracking from "./pages/book-section/FileTracking";
 import CpFund from "./pages/regular-employee/CpFund";
 import Placeholder from "./pages/Placeholder";
 
@@ -68,6 +70,8 @@ const App = () => (
                         <Route path="/book-section/security-deposit" element={<SecurityDeposit />} />
                         <Route path="/book-section/pol-bills" element={<PolBills />} />
                         <Route path="/book-section/contigencies" element={<Contigencies />} />
+                        <Route path="/book-section/bill-dispatch" element={<BillDispatch />} />
+                        <Route path="/book-section/file-tracking" element={<FileTracking />} />
                         <Route path="/book-section/cheque-record" element={<ChequeRecord />} />
                         <Route path="/regular-employee/cp-fund" element={<CpFund />} />
                         <Route path="/regular-employee/supp-salary" element={<CpFund title="Supp Salary" />} />

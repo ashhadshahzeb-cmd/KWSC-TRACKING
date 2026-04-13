@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Lock, FileText, Landmark, Search, Save, RotateCcw, ShieldCheck, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -14,6 +14,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 export default function SecurityDeposit() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const navState = location.state as any;
   
   // Records State
   const [records, setRecords] = useState<any[]>([]);
@@ -61,7 +63,18 @@ export default function SecurityDeposit() {
 
   useEffect(() => {
     fetchRecords();
-  }, []);
+
+    // Check if data is coming from Bill Dispatch (navState)
+    if (navState) {
+        if (navState.vendorName || navState.contractorName) setVendorName(navState.vendorName || navState.contractorName);
+        if (navState.grossAmount) setGrossAmount(navState.grossAmount.toString());
+        if (navState.voucherNo) setVoucherNo(navState.voucherNo);
+        if (navState.partyCode) setPartyCode(navState.partyCode);
+        toast.success("Data imported from Bill Dispatch");
+        // Clear history state
+        window.history.replaceState({}, document.title);
+    }
+  }, [navState]);
 
   const handleReset = (silent = false) => {
     setYearSD("");

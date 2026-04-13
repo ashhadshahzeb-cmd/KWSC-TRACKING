@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Fuel, Search, Save, RotateCcw, Trash2, User, Truck, Calendar, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -14,6 +14,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 export default function PolBills() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const navState = location.state as any;
   
   // Records State
   const [records, setRecords] = useState<any[]>([]);
@@ -33,6 +35,7 @@ export default function PolBills() {
   const [fuelType, setFuelType] = useState("");
   const [grossAmount, setGrossAmount] = useState("0");
   const [fuelStations, setFuelStations] = useState("");
+  const [trackingId, setTrackingId] = useState<string | null>(null);
   
   const fetchRecords = async () => {
     try {
@@ -51,7 +54,19 @@ export default function PolBills() {
 
   useEffect(() => {
     fetchRecords();
-  }, []);
+
+    // Check if data is coming from Bill Dispatch (navState)
+    if (navState) {
+        if (navState.vendorName || navState.contractorName) setOfficerName(navState.vendorName || navState.contractorName);
+        if (navState.grossAmount) setGrossAmount(navState.grossAmount.toString());
+        if (navState.voucherNo) setPoiBill(navState.voucherNo);
+        if (navState.partyCode) setEmpNo(navState.partyCode);
+        if (navState.trackingId) setTrackingId(navState.trackingId);
+        toast.success("Data imported from Bill Dispatch");
+        // Clear history state
+        window.history.replaceState({}, document.title);
+    }
+  }, [navState]);
 
   const [vendorType, setVendorType] = useState("pol_bills");
 
@@ -198,6 +213,19 @@ export default function PolBills() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">POL Billings</h1>
           <p className="text-sm text-muted-foreground mt-1">Manage fuel, oil, and lubricant related expenses with precision</p>
+          {trackingId && (
+            <div className="mt-2 flex items-center gap-2">
+               <span className="text-[10px] font-bold bg-primary/20 text-primary px-2 py-0.5 rounded-md border border-primary/20 uppercase tracking-widest">Tracking: {trackingId}</span>
+               <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-6 text-[10px] gap-1 hover:text-primary p-0 text-muted-foreground uppercase"
+                onClick={() => navigate('/book-section/file-tracking', { state: { bill: { tracking_id: trackingId, diary_no: poiBill, party_name: officerName } } })}
+               >
+                 <Search className="w-3 h-3" /> Journey
+                </Button>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" size="sm" onClick={() => handleReset()} className="gap-2 h-9 px-4">
