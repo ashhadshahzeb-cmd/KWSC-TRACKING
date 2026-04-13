@@ -300,6 +300,7 @@ export default function FileTracking() {
     }
     setIsSavingForm(true);
     try {
+      const existingRecordIndex = records.findIndex(r => r.receiving_number === formData.receiving_number);
       const trackingId = `FT-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`;
       const newEntry = {
           tracking_id: trackingId,
@@ -390,7 +391,7 @@ export default function FileTracking() {
       const { data, error } = await supabase
         .from('bill_dispatch' as any)
         .select('*')
-        .or(`tracking_id.eq.${searchQuery},diary_no.eq.${searchQuery}`)
+        .or(`tracking_id.eq.${searchQuery},diary_no.eq.${searchQuery},receiving_number.eq.${searchQuery}`)
         .maybeSingle();
 
       if (error) throw error;
