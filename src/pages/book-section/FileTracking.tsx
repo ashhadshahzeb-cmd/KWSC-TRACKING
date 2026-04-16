@@ -398,15 +398,20 @@ export default function FileTracking() {
   }, [location.state]);
 
   const handleSearch = async () => {
+    // If empty, we show all in the list anyway
     if (!searchQuery) {
-      toast.error("Please enter a Tracking ID or Diary Number");
-      return;
+       setSelectedBill(null);
+       return;
     }
 
     setLoading(true);
     try {
-      // 1. Check local records first (Simulation data)
-      const localMatch = records.find(r => r.tracking_id === searchQuery || r.cfo_diary_number === searchQuery || r.receiving_number === searchQuery);
+      // 1. Check local records first (Simulation data) - Priority for exact match
+      const localMatch = records.find(r => 
+        r.tracking_id?.toLowerCase() === searchQuery.toLowerCase() || 
+        r.cfo_diary_number?.toLowerCase() === searchQuery.toLowerCase() || 
+        r.receiving_number?.toLowerCase() === searchQuery.toLowerCase()
+      );
 
       if (localMatch) {
         setSelectedBill({
@@ -419,94 +424,13 @@ export default function FileTracking() {
         setLoading(false);
         return;
       }
+      
+      // Clear selected if not found exactly, to allow filtered list to show
+      setSelectedBill(null);
 
-      // 2. Fallback to Supabase/Mock data
-      const { data, error } = await supabase
-        .from('bill_dispatch' as any)
-        .select('*')
-        .or(`tracking_id.eq.${searchQuery},diary_no.eq.${searchQuery},receiving_number.eq.${searchQuery}`)
-        .maybeSingle();
-
-      if (error) throw error;
-
-      if (data) {
-        setSelectedBill(data);
-        toast.success("File record found!");
-      } else {
-        // Advanced Mock Data for demo/testing
-        const mockRecords: Record<string, any> = {
-          "12": {
-            tracking_id: "FL-2024-0012",
-            diary_no: "Diary-12",
-            party_name: "Pakistan State Oil (PSO)",
-            subject: "Fuel Supply for KW&SB Vehicles",
-            amount: 1250000,
-            status: "forwarded",
-            forwarded_to: "pol_bills",
-            received_date: "2024-04-12",
-            history: [
-              { step: "Inward Entry", date: "2024-04-12T09:00:00Z", location: "Bill Dispatch", remarks: "Received bulk fuel invoice" },
-              { step: "Forwarded", date: "2024-04-12T11:30:00Z", location: "POL Bills Section", remarks: "For consumption verification" }
-            ]
-          },
-          "101": {
-            tracking_id: "FL-2024-0101",
-            diary_no: "D-101",
-            party_name: "Aga Khan University Hospital",
-            subject: "Emergency Medical Claim - Staff ID #4492",
-            amount: 45000,
-            status: "forwarded",
-            forwarded_to: "medical",
-            received_date: "2024-04-05",
-            history: [
-              { step: "Inward Entry", date: "2024-04-05T10:00:00Z", location: "Bill Dispatch", remarks: "Priority medical case" },
-              { step: "Forwarded", date: "2024-04-05T14:00:00Z", location: "Medical Section", remarks: "Verify treatment bill" },
-              { step: "Processed", date: "2024-04-06T10:00:00Z", location: "Medical Section", remarks: "Bill checked & approved" },
-              { step: "Forwarded", date: "2024-04-06T11:00:00Z", location: "CFO Office", remarks: "For final signature" }
-            ]
-          },
-          "202": {
-            tracking_id: "FL-2024-0202",
-            diary_no: "KW-202",
-            party_name: "Indus Constructions Ltd",
-            subject: "Sewerage Pipe Replacement - District Central",
-            amount: 8500000,
-            status: "forwarded",
-            forwarded_to: "contractor",
-            received_date: "2024-04-08",
-            history: [
-              { step: "Inward Entry", date: "2024-04-08T15:00:00Z", location: "Bill Dispatch", remarks: "Completion certificate attached" },
-              { step: "Forwarded", date: "2024-04-09T10:00:00Z", location: "Contractor Section", remarks: "Check MB entries" }
-            ]
-          }
-        };
-
-        if (mockRecords[searchQuery]) {
-          setSelectedBill(mockRecords[searchQuery]);
-          toast.success("Found mock record for demonstration");
-        } else if (searchQuery.startsWith('FL-')) {
-          setSelectedBill({
-            tracking_id: searchQuery,
-            diary_no: "KWB/2024/099",
-            party_name: "Mock Vendor Ltd",
-            subject: "Emergency Repair Works",
-            amount: 75000,
-            status: "forwarded",
-            forwarded_to: "medical",
-            received_date: "2024-04-10",
-            history: [
-              { step: "Inward Entry", date: "2024-04-10T10:00:00Z", location: "Bill Dispatch", remarks: "Received by Ahmed" },
-              { step: "Forwarded", date: "2024-04-11T14:30:00Z", location: "Medical Section", remarks: "Allocated for budget verification" }
-            ]
-          });
-          toast.info("Generated temp tracking view");
-        } else {
-          toast.error("No record found with this ID");
-        }
-      }
     } catch (err: any) {
       console.error(err);
-      toast.error("Error fetching record");
+      toast.error("Error searching record");
     } finally {
       setLoading(false);
     }
@@ -556,6 +480,18 @@ export default function FileTracking() {
   const handleQRClick = (diary: string, receiving: string) => {
     setQrFullScreen({ diary, receiving });
   };
+
+  const filteredSearchResults = records.filter(r => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      r.tracking_id?.toLowerCase().includes(q) ||
+      r.cfo_diary_number?.toLowerCase().includes(q) ||
+      r.receiving_number?.toLowerCase().includes(q) ||
+      r.subject?.toLowerCase().includes(q) ||
+      r.received_from?.toLowerCase().includes(q)
+    );
+  });
 
   return (
     <div className="space-y-6 animate-fade-in pb-10">
@@ -780,13 +716,97 @@ export default function FileTracking() {
             {/* Content Panel */}
             <div className="lg:col-span-2 space-y-6">
               {!selectedBill ? (
-                <div className="h-full min-h-[400px] flex flex-col items-center justify-center text-center p-10 border-2 border-dashed border-border/50 rounded-2xl bg-muted/5">
-                  <History className="w-16 h-16 text-muted-foreground/20 mb-4" />
-                  <h3 className="text-lg font-bold text-muted-foreground">Search for a file to see its history</h3>
-                  <p className="text-sm text-muted-foreground max-w-xs mx-auto">Enter the unique Tracking ID generated during bill entry to see where your file is currently located.</p>
-                </div>
+                <Card className="glass-card border-none shadow-xl">
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                      <CardTitle className="text-xl font-bold flex items-center gap-2">
+                        <History className="w-6 h-6 text-primary" />
+                        All Entries
+                      </CardTitle>
+                      <p className="text-sm text-muted-foreground mt-1">Found {filteredSearchResults.length} records matching your search</p>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="rounded-md border border-border/50 overflow-hidden">
+                      <Table>
+                        <TableHeader className="bg-muted/50">
+                          <TableRow>
+                            <TableHead className="text-xs uppercase font-bold">Diary No</TableHead>
+                            <TableHead className="text-xs uppercase font-bold text-center">Track QR</TableHead>
+                            <TableHead className="text-xs uppercase font-bold">Subject</TableHead>
+                            <TableHead className="text-xs uppercase font-bold">Marked To</TableHead>
+                            <TableHead className="text-xs uppercase font-bold text-center">Action</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {filteredSearchResults.length === 0 ? (
+                            <TableRow>
+                              <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                                No records found matching "{searchQuery}"
+                              </TableCell>
+                            </TableRow>
+                          ) : (
+                            filteredSearchResults.map((file, i) => (
+                              <TableRow key={i} className="hover:bg-primary/5 transition-colors group">
+                                <TableCell className="font-mono text-xs font-bold text-primary">{file.cfo_diary_number}</TableCell>
+                                <TableCell className="text-center">
+                                  <div 
+                                    className="cursor-zoom-in transition-transform hover:scale-110"
+                                    onClick={() => handleQRClick(file.cfo_diary_number, file.receiving_number)}
+                                  >
+                                    <img 
+                                      src={`https://api.qrserver.com/v1/create-qr-code/?size=35x35&data=${encodeURIComponent(`${window.location.origin}/public-track/${file.cfo_diary_number}/${file.receiving_number}`)}`} 
+                                      alt="QR"
+                                      className="w-8 h-8 mx-auto rounded border border-border bg-white"
+                                    />
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                   <div className="font-semibold text-sm">{file.subject}</div>
+                                   <div className="text-[10px] text-muted-foreground">{file.receiving_number}</div>
+                                </TableCell>
+                                <TableCell>
+                                  <Badge variant="outline" className="text-[10px] uppercase">
+                                    {sections.find(s => s.id === file.mark_to)?.name}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="text-center">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-8 gap-2 border-primary/20 hover:bg-primary hover:text-white"
+                                    onClick={() => {
+                                      setSelectedBill({
+                                        ...file,
+                                        diary_no: file.cfo_diary_number,
+                                        party_name: file.received_from,
+                                        amount: 0
+                                      });
+                                    }}
+                                  >
+                                    View Timeline <ArrowRight className="w-3 h-3" />
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            ))
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </CardContent>
+                </Card>
               ) : (
                 <div className="space-y-6 animate-fade-in">
+                  <div className="flex justify-between items-center">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => setSelectedBill(null)}
+                      className="gap-2 text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      <ArrowLeft className="w-4 h-4" /> Back to Search Results
+                    </Button>
+                  </div>
                   {/* File Details */}
                   <Card className="glass-card border-none shadow-xl overflow-hidden">
                     <div className="h-1 bg-gradient-to-r from-primary to-blue-400" />
@@ -816,7 +836,7 @@ export default function FileTracking() {
                           <MapPin className="w-4 h-4 text-muted-foreground mt-1" />
                           <div>
                             <p className="text-[10px] font-bold text-muted-foreground uppercase">Diary Reference</p>
-                            <p className="font-mono text-sm">{selectedBill.diary_no}</p>
+                            <p className="font-mono text-sm">{selectedBill.diary_no || selectedBill.cfo_diary_number}</p>
                           </div>
                         </div>
                         <div className="flex items-start gap-3">
