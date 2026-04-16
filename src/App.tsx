@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { VoiceProvider } from "@/contexts/VoiceContext";
 import Layout from "@/components/Layout";
 import VoiceAssistant from "@/components/VoiceAssistant";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import Dashboard from "./pages/Dashboard";
 import ChartOfAccounts from "./pages/ChartOfAccounts";
 import GeneralLedger from "./pages/GeneralLedger";
@@ -25,6 +26,7 @@ import Contigencies from "./pages/book-section/Contigencies";
 import ChequeRecord from "./pages/book-section/ChequeRecord";
 import BillDispatch from "./pages/book-section/BillDispatch";
 import FileTracking from "./pages/book-section/FileTracking";
+import PublicTracking from "./pages/PublicTracking";
 import CpFund from "./pages/regular-employee/CpFund";
 import Placeholder from "./pages/Placeholder";
 
@@ -37,68 +39,71 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <AuthProvider>
-        <VoiceProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/login" element={<AuthPage />} />
-              <Route 
-                path="/*" 
-                element={
-                  <ProtectedRoute>
-                    <VoiceAssistant />
-                    <Layout>
-                      <Routes>
-                        <Route path="/" element={
-                          <ProtectedRoute>
-                            <Dashboard />
-                          </ProtectedRoute>
-                        } />
-                        <Route path="/chart-of-accounts" element={<ChartOfAccounts />} />
-                        <Route path="/general-ledger" element={<GeneralLedger />} />
-                        <Route path="/bank-accounts" element={<BankAccounts />} />
-                        <Route path="/transactions" element={<Transactions />} />
-                        <Route path="/bank-entries" element={<BankEntries />} />
-                        <Route path="/reports" element={<Reports />} />
-                        <Route path="/book-section/regular-employee" element={<RegularEmployee />} />
-                        <Route path="/book-section/retired-employee" element={<RetiredEmployee />} />
-                        <Route path="/book-section/emp-details" element={<EmpDetails />} />
-                        <Route path="/book-section/medical" element={<Medical />} />
-                        <Route path="/book-section/contractor" element={<Contractor />} />
-                        <Route path="/book-section/security-deposit" element={<SecurityDeposit />} />
-                        <Route path="/book-section/pol-bills" element={<PolBills />} />
-                        <Route path="/book-section/contigencies" element={<Contigencies />} />
-                        <Route path="/book-section/bill-dispatch" element={<BillDispatch />} />
-                        <Route path="/book-section/file-tracking" element={<FileTracking />} />
-                        <Route path="/book-section/cheque-record" element={<ChequeRecord />} />
-                        <Route path="/regular-employee/cp-fund" element={<CpFund />} />
-                        <Route path="/regular-employee/supp-salary" element={<CpFund title="Supp Salary" />} />
-                        <Route path="/regular-employee/house-building" element={<CpFund title="House Building" />} />
-                        <Route path="/regular-employee/marriage-bike" element={<CpFund title="Marriage/Bike" />} />
-                        <Route path="/regular-employee/medical-case" element={<CpFund title="Medical Case" />} />
-                        <Route path="/regular-employee/over-time" element={<CpFund title="Over Time" />} />
-                        <Route path="/regular-employee/tada" element={<CpFund title="TADA" />} />
-                        
-                        <Route path="/retired-employee/fund" element={<CpFund title="Fund" />} />
-                        <Route path="/retired-employee/lpr" element={<CpFund title="LPR" />} />
-                        <Route path="/retired-employee/pension-gratuity" element={<CpFund title="Pension/Gratuity" />} />
-                        <Route path="/retired-employee/pension-arrear" element={<CpFund title="Pension Arrear" />} />
-                        <Route path="/retired-employee/financial-assist" element={<CpFund title="Financial Assist" />} />
-                        <Route path="/retired-employee/funeral-charges" element={<CpFund title="Funeral Charges" />} />
-                        <Route path="/retired-employee/group-insurance" element={<CpFund title="Group Insurance" />} />
-                        
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </Layout>
-                  </ProtectedRoute>
-                } 
-              />
-            </Routes>
-          </BrowserRouter>
-        </VoiceProvider>
-      </AuthProvider>
+      <ThemeProvider>
+        <Toaster />
+        <Sonner />
+        <AuthProvider>
+          <VoiceProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/login" element={<AuthPage />} />
+                <Route path="/public-track/:diaryNo/:receivingNo" element={<PublicTracking />} />
+                <Route 
+                  path="/*" 
+                  element={
+                    <ProtectedRoute>
+                      <VoiceAssistant />
+                      <Layout>
+                        <Routes>
+                          <Route path="/" element={
+                            <ProtectedRoute>
+                              <Dashboard />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/chart-of-accounts" element={<ChartOfAccounts />} />
+                          <Route path="/general-ledger" element={<GeneralLedger />} />
+                          <Route path="/bank-accounts" element={<BankAccounts />} />
+                          <Route path="/transactions" element={<Transactions />} />
+                          <Route path="/bank-entries" element={<BankEntries />} />
+                          <Route path="/reports" element={<Reports />} />
+                          <Route path="/book-section/regular-employee" element={<RegularEmployee />} />
+                          <Route path="/book-section/retired-employee" element={<RetiredEmployee />} />
+                          <Route path="/book-section/emp-details" element={<EmpDetails />} />
+                          <Route path="/book-section/medical" element={<Medical />} />
+                          <Route path="/book-section/contractor" element={<Contractor />} />
+                          <Route path="/book-section/security-deposit" element={<SecurityDeposit />} />
+                          <Route path="/book-section/pol-bills" element={<PolBills />} />
+                          <Route path="/book-section/contigencies" element={<Contigencies />} />
+                          <Route path="/book-section/bill-dispatch" element={<BillDispatch />} />
+                          <Route path="/book-section/file-tracking" element={<FileTracking />} />
+                          <Route path="/book-section/cheque-record" element={<ChequeRecord />} />
+                          <Route path="/regular-employee/cp-fund" element={<CpFund />} />
+                          <Route path="/regular-employee/supp-salary" element={<CpFund title="Supp Salary" />} />
+                          <Route path="/regular-employee/house-building" element={<CpFund title="House Building" />} />
+                          <Route path="/regular-employee/marriage-bike" element={<CpFund title="Marriage/Bike" />} />
+                          <Route path="/regular-employee/medical-case" element={<CpFund title="Medical Case" />} />
+                          <Route path="/regular-employee/over-time" element={<CpFund title="Over Time" />} />
+                          <Route path="/regular-employee/tada" element={<CpFund title="TADA" />} />
+                          
+                          <Route path="/retired-employee/fund" element={<CpFund title="Fund" />} />
+                          <Route path="/retired-employee/lpr" element={<CpFund title="LPR" />} />
+                          <Route path="/retired-employee/pension-gratuity" element={<CpFund title="Pension/Gratuity" />} />
+                          <Route path="/retired-employee/pension-arrear" element={<CpFund title="Pension Arrear" />} />
+                          <Route path="/retired-employee/financial-assist" element={<CpFund title="Financial Assist" />} />
+                          <Route path="/retired-employee/funeral-charges" element={<CpFund title="Funeral Charges" />} />
+                          <Route path="/retired-employee/group-insurance" element={<CpFund title="Group Insurance" />} />
+                          
+                          <Route path="*" element={<NotFound />} />
+                        </Routes>
+                      </Layout>
+                    </ProtectedRoute>
+                  } 
+                />
+              </Routes>
+            </BrowserRouter>
+          </VoiceProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

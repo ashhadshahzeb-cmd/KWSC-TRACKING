@@ -3,19 +3,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { 
-  Search, 
-  MapPin, 
-  Clock, 
-  History, 
-  FileText, 
-  Printer, 
-  ArrowRight, 
-  CheckCircle2, 
-  FileSearch, 
-  Building2, 
-  Calendar, 
-  User, 
+import {
+  Search,
+  MapPin,
+  Clock,
+  History,
+  FileText,
+  Printer,
+  ArrowRight,
+  CheckCircle2,
+  FileSearch,
+  Building2,
+  Calendar,
+  User,
   MessageSquare,
   Save,
   Loader2,
@@ -57,7 +57,7 @@ export default function FileTracking() {
   const location = useLocation();
   const printRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState("register");
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedBill, setSelectedBill] = useState<any>(null);
@@ -81,7 +81,7 @@ export default function FileTracking() {
 
   const [currentRole, setCurrentRole] = useState("cfo"); // Simulation: 'cfo', 'medical', 'contractor', etc.
   const [notifications, setNotifications] = useState<any[]>([]);
-  
+
   // Comprehensive Dummy Data Set for Testing (15+ entries per section)
   const [records, setRecords] = useState<any[]>([
     // MEDICAL SECTION (15 entries)
@@ -168,8 +168,40 @@ export default function FileTracking() {
     { id: "cnt-c13", tracking_id: "FT-CT-513", cfo_diary_number: "CFO-T-13", inward_date: "2024-04-07", received_from: "IT Cell", receiving_number: "RC-T-513", mainCategory: "others", subCategory: "contingencies", subject: "UPS battery replacement - Server Room", mark_to: "contingencies", created_at: "2024-04-07T10:45:00Z", history: [{ mainCategory: "others", subCategory: "contingencies", subject: "Server UPS Case", remarks: "Check technical report", signature_data: "", date: "2024-04-07T10:45:00Z", processed_by: "CFO Office", mark_to: "contingencies" }] },
     { id: "cnt-c14", tracking_id: "FT-CT-514", cfo_diary_number: "CFO-T-14", inward_date: "2024-04-07", received_from: "General Admin", receiving_number: "RC-T-514", mainCategory: "others", subCategory: "contingencies", subject: "Staff ID card printing - Batch 2024", mark_to: "contingencies", created_at: "2024-04-07T15:15:00Z", history: [{ mainCategory: "others", subCategory: "contingencies", subject: "ID Card Print Case", remarks: "Verify quantity", signature_data: "", date: "2024-04-07T15:15:00Z", processed_by: "CFO Office", mark_to: "contingencies" }] },
     { id: "cnt-c15", tracking_id: "FT-CT-515", cfo_diary_number: "CFO-T-15", inward_date: "2024-04-08", received_from: "Accounts Branch", receiving_number: "RC-T-515", mainCategory: "others", subCategory: "contingencies", subject: "Legal advisor fee - Case A-41 settlement", mark_to: "contingencies", created_at: "2024-04-08T09:45:00Z", history: [{ mainCategory: "others", subCategory: "contingencies", subject: "Legal Fee Case", remarks: "Legal clearance attached", signature_data: "", date: "2024-04-08T09:45:00Z", processed_by: "CFO Office", mark_to: "contingencies" }] },
+
+    // CIA SECTION
+    { id: "cia-1", tracking_id: "FT-CIA-601", cfo_diary_number: "CFO-CIA-01", inward_date: "2024-04-10", received_from: "Audit Cell", receiving_number: "RC-CIA-601", mainCategory: "others", subCategory: "audit", subject: "Pre-audit of Revenue Collection", mark_to: "cia", created_at: "2024-04-10T10:00:00Z", history: [{ mainCategory: "others", subCategory: "audit", subject: "Revenue Audit", remarks: "For verification", signature_data: "", date: "2024-04-10T10:00:00Z", processed_by: "CFO Office", mark_to: "cia" }] },
+    { id: "cia-2", tracking_id: "FT-CIA-602", cfo_diary_number: "CFO-CIA-02", inward_date: "2024-04-11", received_from: "Technical Branch", receiving_number: "RC-CIA-602", mainCategory: "contractor", subCategory: "final_bill", subject: "Technical Audit - HUB Project", mark_to: "cia", created_at: "2024-04-11T11:30:00Z", history: [{ mainCategory: "contractor", subCategory: "final_bill", subject: "HUB Project Audit", remarks: "Please review findings", signature_data: "", date: "2024-04-11T11:30:00Z", processed_by: "CFO Office", mark_to: "cia" }] },
+
+    // BUDGET SECTION
+    { id: "bud-1", tracking_id: "FT-BUD-701", cfo_diary_number: "CFO-BUD-01", inward_date: "2024-04-12", received_from: "Finance Branch", receiving_number: "RC-BUD-701", mainCategory: "others", subCategory: "budget", subject: "Allocation for Q4 Emergency Fund", mark_to: "budget", created_at: "2024-04-12T09:00:00Z", history: [{ mainCategory: "others", subCategory: "budget", subject: "Q4 Fund Allocation", remarks: "Check budget ceilings", signature_data: "", date: "2024-04-12T09:00:00Z", processed_by: "CFO Office", mark_to: "budget" }] },
+    { id: "bud-2", tracking_id: "FT-BUD-702", cfo_diary_number: "CFO-BUD-02", inward_date: "2024-04-13", received_from: "CE West", receiving_number: "RC-BUD-702", mainCategory: "others", subCategory: "budget", subject: "Tender Budget Verification - Pipe Line X", mark_to: "budget", created_at: "2024-04-13T14:00:00Z", history: [{ mainCategory: "others", subCategory: "budget", subject: "Verification Case", remarks: "Sufficient funds available", signature_data: "", date: "2024-04-13T14:00:00Z", processed_by: "CFO Office", mark_to: "budget" }] },
+
+    // PENSION SECTION
+    { id: "pen-1", tracking_id: "FT-PEN-801", cfo_diary_number: "CFO-PEN-01", inward_date: "2024-04-14", received_from: "HR Admin", receiving_number: "RC-PEN-801", mainCategory: "employee", subCategory: "pension", subject: "Commutation Case - Staff ID 1120", mark_to: "pension", created_at: "2024-04-14T10:00:00Z", history: [{ mainCategory: "employee", subCategory: "pension", subject: "Commutation Payout", remarks: "Service book verified", signature_data: "", date: "2024-04-14T10:00:00Z", processed_by: "CFO Office", mark_to: "pension" }] },
+    { id: "pen-2", tracking_id: "FT-PEN-802", cfo_diary_number: "CFO-PEN-02", inward_date: "2024-04-15", received_from: "Welfare Cell", receiving_number: "RC-PEN-802", mainCategory: "employee", subCategory: "pension", subject: "Family Pension Claim - Late Staff 992", mark_to: "pension", created_at: "2024-04-15T15:30:00Z", history: [{ mainCategory: "employee", subCategory: "pension", subject: "Family Pension", remarks: "Succession doc check", signature_data: "", date: "2024-04-15T15:30:00Z", processed_by: "CFO Office", mark_to: "pension" }] },
+
+    // FUND SECTION
+    { id: "fnd-1", tracking_id: "FT-FND-901", cfo_diary_number: "CFO-FND-01", inward_date: "2024-04-12", received_from: "Accounts Branch", receiving_number: "RC-FND-901", mainCategory: "employee", subCategory: "fund", subject: "GP-Fund Withdrawal - Staff ID 3381", mark_to: "fund", created_at: "2024-04-12T11:00:00Z", history: [{ mainCategory: "employee", subCategory: "fund", subject: "GPF Refund", remarks: "Check ledger balance", signature_data: "", date: "2024-04-12T11:00:00Z", processed_by: "CFO Office", mark_to: "fund" }] },
+    { id: "fnd-2", tracking_id: "FT-FND-902", cfo_diary_number: "CFO-FND-02", inward_date: "2024-04-13", received_from: "Fund Management", receiving_number: "RC-FND-902", mainCategory: "others", subCategory: "investments", subject: "Dividend Income - Q1 2024", mark_to: "fund", created_at: "2024-04-13T16:00:00Z", history: [{ mainCategory: "others", subCategory: "investments", subject: "Dividend Entry", remarks: "Bank scroll matched", signature_data: "", date: "2024-04-13T16:00:00Z", processed_by: "CFO Office", mark_to: "fund" }] },
+
+    // INTERNAL AUDIT-1 SECTION
+    { id: "ia1-1", tracking_id: "FT-IA1-1001", cfo_diary_number: "CFO-IA1-01", inward_date: "2024-04-14", received_from: "Workshop Cell", receiving_number: "RC-IA1-1001", mainCategory: "others", subCategory: "audit", subject: "Internal Audit of Spare Parts Stock", mark_to: "internal_audit_1", created_at: "2024-04-14T09:00:00Z", history: [{ mainCategory: "others", subCategory: "audit", subject: "Stock Audit", remarks: "Physical verification done", signature_data: "", date: "2024-04-14T09:00:00Z", processed_by: "CFO Office", mark_to: "internal_audit_1" }] },
+    { id: "ia1-2", tracking_id: "FT-IA1-1002", cfo_diary_number: "CFO-IA1-02", inward_date: "2024-04-15", received_from: "Transport Cell", receiving_number: "RC-IA1-1002", mainCategory: "others", subCategory: "audit", subject: "Audit of Diesel Consumption Log", mark_to: "internal_audit_1", created_at: "2024-04-15T13:45:00Z", history: [{ mainCategory: "others", subCategory: "audit", subject: "Fuel Audit", remarks: "Matched with GPS logs", signature_data: "", date: "2024-04-15T13:45:00Z", processed_by: "CFO Office", mark_to: "internal_audit_1" }] },
+
+    // DIRECTOR ACCOUNT SECTION
+    { id: "da-1", tracking_id: "FT-DA-1101", cfo_diary_number: "CFO-DA-01", inward_date: "2024-04-10", received_from: "Revenue Section", receiving_number: "RC-DA-1101", mainCategory: "others", subCategory: "accounts", subject: "Monthly Reconciliation Report - March", mark_to: "director_account", created_at: "2024-04-10T10:30:00Z", history: [{ mainCategory: "others", subCategory: "accounts", subject: "March Reconciliation", remarks: "Review differences", signature_data: "", date: "2024-04-10T10:30:00Z", processed_by: "CFO Office", mark_to: "director_account" }] },
+    { id: "da-2", tracking_id: "FT-DA-1102", cfo_diary_number: "CFO-DA-02", inward_date: "2024-04-11", received_from: "Finance Cell", receiving_number: "RC-DA-1102", mainCategory: "others", subCategory: "accounts", subject: "Subsidy Claim from Government", mark_to: "director_account", created_at: "2024-04-11T16:15:00Z", history: [{ mainCategory: "others", subCategory: "accounts", subject: "Government Subsidy", remarks: "Attached gazette notice", signature_data: "", date: "2024-04-11T16:15:00Z", processed_by: "CFO Office", mark_to: "director_account" }] },
+
+    // DIRECTOR FINANCE SECTION
+    { id: "df-1", tracking_id: "FT-DF-1201", cfo_diary_number: "CFO-DF-01", inward_date: "2024-04-12", received_from: "Strategic Planning", receiving_number: "RC-DF-1201", mainCategory: "others", subCategory: "finance", subject: "Financial Outlook 2025-2026", mark_to: "director_finance", created_at: "2024-04-12T11:00:00Z", history: [{ mainCategory: "others", subCategory: "finance", subject: "5 Year Plan Finance", remarks: "For policy review", signature_data: "", date: "2024-04-12T11:00:00Z", processed_by: "CFO Office", mark_to: "director_finance" }] },
+    { id: "df-2", tracking_id: "FT-DF-1202", cfo_diary_number: "CFO-DF-02", inward_date: "2024-04-13", received_from: "Commercial Cell", receiving_number: "RC-DF-1202", mainCategory: "others", subCategory: "finance", subject: "New Billing Strategy Approval", mark_to: "director_finance", created_at: "2024-04-13T15:20:00Z", history: [{ mainCategory: "others", subCategory: "finance", subject: "Commercial Strategy", remarks: "ROI analysis attached", signature_data: "", date: "2024-04-13T15:20:00Z", processed_by: "CFO Office", mark_to: "director_finance" }] },
+
+    // CFO SECTION (Direct markings)
+    { id: "cfo-1", tracking_id: "FT-CFO-1301", cfo_diary_number: "CFO-MSG-01", inward_date: "2024-04-16", received_from: "MD Secretariat", receiving_number: "RC-CFO-1301", mainCategory: "others", subCategory: "general", subject: "Urgent Policy Review Request", mark_to: "cfo", created_at: "2024-04-16T09:00:00Z", history: [{ mainCategory: "others", subCategory: "general", subject: "Urgent Review", remarks: "MD directed", signature_data: "", date: "2024-04-16T09:00:00Z", processed_by: "MD Office", mark_to: "cfo" }] },
+    { id: "cfo-2", tracking_id: "FT-CFO-1302", cfo_diary_number: "CFO-MSG-02", inward_date: "2024-04-16", received_from: "Legal Branch", receiving_number: "RC-CFO-1302", mainCategory: "others", subCategory: "legal", subject: "Final Signature - Lease Deed 409", mark_to: "cfo", created_at: "2024-04-16T11:00:00Z", history: [{ mainCategory: "others", subCategory: "legal", subject: "Lease Deed", remarks: "Legal cleared", signature_data: "", date: "2024-04-16T11:00:00Z", processed_by: "Legal Cell", mark_to: "cfo" }] },
   ]);
-  
+
   /* 
     SUPABASE SQL SCHEMA FOR file_tracking_records:
     
@@ -192,8 +224,9 @@ export default function FileTracking() {
       created_at TIMESTAMPTZ DEFAULT now()
     );
   */
-  
+
   const [isSignDialogOpen, setIsSignDialogOpen] = useState(false);
+  const [qrFullScreen, setQrFullScreen] = useState<{ diary: string, receiving: string } | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
 
@@ -303,35 +336,35 @@ export default function FileTracking() {
       const existingRecordIndex = records.findIndex(r => r.receiving_number === formData.receiving_number);
       const trackingId = `FT-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`;
       const newEntry = {
-          tracking_id: trackingId,
-          ...formData,
+        tracking_id: trackingId,
+        ...formData,
       };
 
       const { error } = await supabase.from('file_tracking_records' as any).insert(newEntry);
-      
+
       if (error) {
-         console.warn("Table file_tracking_records not found, updating local records state.");
+        console.warn("Table file_tracking_records not found, updating local records state.");
       }
-      
+
       // Update local state for simulation with full data snapshot
-      const snapshot = { 
-        ...formData, 
-        date: new Date().toISOString(), 
+      const snapshot = {
+        ...formData,
+        date: new Date().toISOString(),
         processed_by: sections.find(s => s.id === currentRole)?.name,
         action: existingRecordIndex !== -1 ? "FORWARDED" : "REGISTERED"
       };
-      
+
       if (existingRecordIndex !== -1) {
         // Appending to existing file history
         const updatedRecords = [...records];
         updatedRecords[existingRecordIndex] = {
-           ...updatedRecords[existingRecordIndex],
-           mark_to: formData.mark_to,
-           remarks: formData.remarks,
-           history: [
-             ...updatedRecords[existingRecordIndex].history,
-             snapshot
-           ]
+          ...updatedRecords[existingRecordIndex],
+          mark_to: formData.mark_to,
+          remarks: formData.remarks,
+          history: [
+            ...updatedRecords[existingRecordIndex].history,
+            snapshot
+          ]
         };
         setRecords(updatedRecords);
         toast.success(`Detailed log entry added and file forwarded to ${formData.mark_to}`);
@@ -346,7 +379,7 @@ export default function FileTracking() {
         setRecords([fullEntry, ...records]);
         toast.success(`File registered and initial audit log created`);
       }
-      
+
       handleFormReset();
     } catch (err) {
       console.error(err);
@@ -374,13 +407,13 @@ export default function FileTracking() {
     try {
       // 1. Check local records first (Simulation data)
       const localMatch = records.find(r => r.tracking_id === searchQuery || r.cfo_diary_number === searchQuery || r.receiving_number === searchQuery);
-      
+
       if (localMatch) {
         setSelectedBill({
-           ...localMatch,
-           diary_no: localMatch.cfo_diary_number, // map for display consistency
-           party_name: localMatch.received_from,
-           amount: 0 // local records don't have amount in this simple demo
+          ...localMatch,
+          diary_no: localMatch.cfo_diary_number, // map for display consistency
+          party_name: localMatch.received_from,
+          amount: 0 // local records don't have amount in this simple demo
         });
         toast.success("Found record in current session tray");
         setLoading(false);
@@ -452,21 +485,21 @@ export default function FileTracking() {
           setSelectedBill(mockRecords[searchQuery]);
           toast.success("Found mock record for demonstration");
         } else if (searchQuery.startsWith('FL-')) {
-            setSelectedBill({
-                tracking_id: searchQuery,
-                diary_no: "KWB/2024/099",
-                party_name: "Mock Vendor Ltd",
-                subject: "Emergency Repair Works",
-                amount: 75000,
-                status: "forwarded",
-                forwarded_to: "medical",
-                received_date: "2024-04-10",
-                history: [
-                    { step: "Inward Entry", date: "2024-04-10T10:00:00Z", location: "Bill Dispatch", remarks: "Received by Ahmed" },
-                    { step: "Forwarded", date: "2024-04-11T14:30:00Z", location: "Medical Section", remarks: "Allocated for budget verification" }
-                ]
-            });
-            toast.info("Generated temp tracking view");
+          setSelectedBill({
+            tracking_id: searchQuery,
+            diary_no: "KWB/2024/099",
+            party_name: "Mock Vendor Ltd",
+            subject: "Emergency Repair Works",
+            amount: 75000,
+            status: "forwarded",
+            forwarded_to: "medical",
+            received_date: "2024-04-10",
+            history: [
+              { step: "Inward Entry", date: "2024-04-10T10:00:00Z", location: "Bill Dispatch", remarks: "Received by Ahmed" },
+              { step: "Forwarded", date: "2024-04-11T14:30:00Z", location: "Medical Section", remarks: "Allocated for budget verification" }
+            ]
+          });
+          toast.info("Generated temp tracking view");
         } else {
           toast.error("No record found with this ID");
         }
@@ -484,33 +517,44 @@ export default function FileTracking() {
   };
 
   const sections = [
-    { id: 'cfo', name: 'CFO Office' },
-    { id: 'medical', name: 'Medical Section' },
-    { id: 'contractor', name: 'Contractor Section' },
-    { id: 'security_deposit', name: 'Security Deposit' },
-    { id: 'pol_bills', name: 'POL Bills Section' },
-    { id: 'contingencies', name: 'Contingencies' }
+    { id: 'cfo', name: 'CFO' },
+    { id: 'cia', name: 'CIA' },
+    { id: 'budget', name: 'BUDGET' },
+    { id: 'pension', name: 'PENSION' },
+    { id: 'fund', name: 'FUND' },
+    { id: 'internal_audit_1', name: 'INTERNAL AUDIT-1' },
+    { id: 'director_account', name: 'DIRECTOR ACCOUNT' },
+    { id: 'director_finance', name: 'DIRECTOR FINANCE' },
+    { id: 'medical', name: 'MEDICAL' },
+    { id: 'contractor', name: 'CONTRACTOR' },
+    { id: 'security_deposit', name: 'SECURITY DEPOSIT' },
+    { id: 'pol_bills', name: 'POL BILLS' },
+    { id: 'contingencies', name: 'CONTINGENCIES' }
   ];
 
   // Logic to filter incoming files for the current role
   const incomingFiles = records.filter(r => r.mark_to === currentRole);
 
   const handleProcessFile = (file: any) => {
-     // Prepare form for the selected department to contribute their part
-     setActiveTab("register"); // Switch to registration tab
-     setFormData({
-        ...formData,
-        cfo_diary_number: file.cfo_diary_number,
-        received_from: sections.find(s => s.id === currentRole)?.name || file.received_from,
-        receiving_number: file.receiving_number,
-        mainCategory: file.mainCategory,
-        subCategory: file.subCategory,
-        subject: file.subject,
-        remarks: ``, // Clear remarks for new entry
-        mark_to: "cfo", // Defaulting back to CFO
-        signature_data: "" // Clear signature for new person to sign
-     });
-     toast.info(`Now processing: ${file.subject}. Review the journey below before signing.`);
+    // Prepare form for the selected department to contribute their part
+    setActiveTab("register"); // Switch to registration tab
+    setFormData({
+      ...formData,
+      cfo_diary_number: file.cfo_diary_number,
+      received_from: sections.find(s => s.id === currentRole)?.name || file.received_from,
+      receiving_number: file.receiving_number,
+      mainCategory: file.mainCategory,
+      subCategory: file.subCategory,
+      subject: file.subject,
+      remarks: ``, // Clear remarks for new entry
+      mark_to: "cfo", // Defaulting back to CFO
+      signature_data: "" // Clear signature for new person to sign
+    });
+    toast.info(`Now processing: ${file.subject}. Review the journey below before signing.`);
+  };
+
+  const handleQRClick = (diary: string, receiving: string) => {
+    setQrFullScreen({ diary, receiving });
   };
 
   return (
@@ -523,348 +567,375 @@ export default function FileTracking() {
           </h1>
           <p className="text-sm text-muted-foreground italic">Real-time file movement across KW&SB Finance Sections</p>
         </div>
-        
+
         <div className="flex items-center gap-3">
-           <div className="text-right hidden md:block">
-              <p className="text-[10px] font-bold uppercase text-muted-foreground">Current Active Section</p>
-              <p className="text-sm font-bold text-primary">{sections.find(s => s.id === currentRole)?.name}</p>
-           </div>
-           <Select value={currentRole} onValueChange={setCurrentRole}>
-             <SelectTrigger className="w-[200px] bg-background border-primary/20 font-bold">
-               <Users className="w-4 h-4 mr-2 text-primary" />
-               <SelectValue />
-             </SelectTrigger>
-             <SelectContent>
-               {sections.map(s => (
-                 <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
-               ))}
-             </SelectContent>
-           </Select>
-           
-           <Dialog>
-             <DialogTrigger asChild>
-                <Button variant="outline" size="icon" className="relative">
-                   <Bell className="w-5 h-5" />
-                   {incomingFiles.length > 0 && <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[10px] flex items-center justify-center animate-pulse">{incomingFiles.length}</span>}
-                </Button>
-             </DialogTrigger>
-             <DialogContent>
-                <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2">
-                    <ArrowDownCircle className="w-5 h-5 text-emerald-500" />
-                    Incoming Files Tray
-                  </DialogTitle>
-                  <DialogDescription>FILES PENDING YOUR REVIEW AND SIGNATURE</DialogDescription>
-                </DialogHeader>
-                <ScrollArea className="h-[300px] mt-4">
-                   {incomingFiles.length === 0 ? (
-                      <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-                         <Check className="w-10 h-10 opacity-20" />
-                         <p className="text-sm">No new files for your section</p>
+          <div className="text-right hidden md:block">
+            <p className="text-[10px] font-bold uppercase text-muted-foreground">Current Active Section</p>
+            <p className="text-sm font-bold text-primary">{sections.find(s => s.id === currentRole)?.name}</p>
+          </div>
+          <Select value={currentRole} onValueChange={setCurrentRole}>
+            <SelectTrigger className="w-[200px] bg-background border-primary/20 font-bold">
+              <Users className="w-4 h-4 mr-2 text-primary" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {sections.map(s => (
+                <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="icon" className="relative">
+                <Bell className="w-5 h-5" />
+                {incomingFiles.length > 0 && <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[10px] flex items-center justify-center animate-pulse">{incomingFiles.length}</span>}
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <ArrowDownCircle className="w-5 h-5 text-emerald-500" />
+                  Incoming Files Tray
+                </DialogTitle>
+                <DialogDescription>FILES PENDING YOUR REVIEW AND SIGNATURE</DialogDescription>
+              </DialogHeader>
+              <ScrollArea className="h-[300px] mt-4">
+                {incomingFiles.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+                    <Check className="w-10 h-10 opacity-20" />
+                    <p className="text-sm">No new files for your section</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {incomingFiles.map((file, i) => (
+                      <div key={i} className="p-3 rounded-lg border border-border bg-muted/30 hover:bg-primary/5 cursor-pointer transition-colors" onClick={() => handleProcessFile(file)}>
+                        <div className="flex justify-between items-start">
+                          <h4 className="font-bold text-sm">{file.subject}</h4>
+                          <Badge>{file.receiving_number}</Badge>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground mt-1">From: {file.received_from}</p>
+                        <Button variant="ghost" size="sm" className="w-full mt-2 h-7 text-[10px] border border-primary/20">Open & Sign File</Button>
                       </div>
-                   ) : (
-                      <div className="space-y-3">
-                         {incomingFiles.map((file, i) => (
-                            <div key={i} className="p-3 rounded-lg border border-border bg-muted/30 hover:bg-primary/5 cursor-pointer transition-colors" onClick={() => handleProcessFile(file)}>
-                               <div className="flex justify-between items-start">
-                                  <h4 className="font-bold text-sm">{file.subject}</h4>
-                                  <Badge>{file.receiving_number}</Badge>
-                               </div>
-                               <p className="text-[10px] text-muted-foreground mt-1">From: {file.received_from}</p>
-                               <Button variant="ghost" size="sm" className="w-full mt-2 h-7 text-[10px] border border-primary/20">Open & Sign File</Button>
-                            </div>
-                         ))}
-                      </div>
-                   )}
-                </ScrollArea>
-             </DialogContent>
-           </Dialog>
+                    ))}
+                  </div>
+                )}
+              </ScrollArea>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-         <div className="flex justify-between items-center mb-6 border-b border-border/50 pb-4">
-            <TabsList className="grid w-[600px] grid-cols-3 bg-muted/50 p-1 border border-border/50">
-              <TabsTrigger value="register" className="font-bold data-[state=active]:bg-primary data-[state=active]:text-white gap-2">
-                <Plus className="w-4 h-4" /> New Registration
-              </TabsTrigger>
-              <TabsTrigger value="tray" className="font-bold data-[state=active]:bg-primary data-[state=active]:text-white gap-2 relative">
-                <Inbox className="w-4 h-4" /> My Tray
-                {incomingFiles.length > 0 && <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[10px] flex items-center justify-center">{incomingFiles.length}</span>}
-              </TabsTrigger>
-              <TabsTrigger value="track" className="font-bold data-[state=active]:bg-primary data-[state=active]:text-white gap-2">
-                <Search className="w-4 h-4" /> Global Search
-              </TabsTrigger>
-            </TabsList>
-         </div>
+        <div className="flex justify-between items-center mb-6 border-b border-border/50 pb-4">
+          <TabsList className="grid w-[600px] grid-cols-3 bg-muted/50 p-1 border border-border/50">
+            <TabsTrigger value="register" className="font-bold data-[state=active]:bg-primary data-[state=active]:text-white gap-2">
+              <Plus className="w-4 h-4" /> New Registration
+            </TabsTrigger>
+            <TabsTrigger value="tray" className="font-bold data-[state=active]:bg-primary data-[state=active]:text-white gap-2 relative">
+              <Inbox className="w-4 h-4" /> My Tray
+              {incomingFiles.length > 0 && <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[10px] flex items-center justify-center">{incomingFiles.length}</span>}
+            </TabsTrigger>
+            <TabsTrigger value="track" className="font-bold data-[state=active]:bg-primary data-[state=active]:text-white gap-2">
+              <Search className="w-4 h-4" /> Global Search
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-         <TabsContent value="tray" className="animate-fade-in">
-           <Card className="glass-card border-none shadow-xl">
-             <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                   <CardTitle className="text-xl font-bold flex items-center gap-2">
-                     <Inbox className="w-6 h-6 text-primary" />
-                     {sections.find(s => s.id === currentRole)?.name} - Departmental Tray
-                   </CardTitle>
-                   <p className="text-sm text-muted-foreground mt-1">Files assigned to your section for processing</p>
-                </div>
-             </CardHeader>
-             <CardContent>
-                {incomingFiles.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-20 text-muted-foreground bg-muted/5 rounded-xl border-2 border-dashed border-border/50">
-                     <Inbox className="w-16 h-16 opacity-10 mb-4" />
-                     <h3 className="text-lg font-bold">Your Tray is Empty</h3>
-                     <p className="text-sm">New files marked for your section will appear here.</p>
-                  </div>
-                ) : (
-                  <div className="rounded-md border border-border/50 overflow-hidden">
-                    <Table>
-                      <TableHeader className="bg-muted/50">
-                        <TableRow>
-                          <TableHead className="text-xs uppercase font-bold">Diary/Ref No</TableHead>
-                          <TableHead className="text-xs uppercase font-bold">Subject</TableHead>
-                          <TableHead className="text-xs uppercase font-bold">Category</TableHead>
-                          <TableHead className="text-xs uppercase font-bold">From</TableHead>
-                          <TableHead className="text-xs uppercase font-bold">Date Marked</TableHead>
-                          <TableHead className="text-xs uppercase font-bold text-center">Action</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {incomingFiles.map((file, i) => (
-                          <TableRow key={i} className="hover:bg-primary/5 transition-colors group">
-                            <TableCell className="font-mono text-xs font-bold text-primary">{file.receiving_number}</TableCell>
-                            <TableCell className="font-semibold text-sm">{file.subject}</TableCell>
-                            <TableCell>
-                              <Badge variant="outline" className="text-[10px] uppercase">{file.mainCategory}</Badge>
-                            </TableCell>
-                            <TableCell className="text-xs">{file.received_from}</TableCell>
-                            <TableCell className="text-xs">{new Date(file.created_at).toLocaleDateString()}</TableCell>
-                            <TableCell className="text-center">
-                              <Button 
-                                size="sm" 
-                                variant="outline" 
-                                className="h-8 gap-2 border-primary/20 hover:bg-primary hover:text-white transition-all"
-                                onClick={() => handleProcessFile(file)}
-                              >
-                                Review & Sign <ArrowRight className="w-3 h-3" />
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                )}
-             </CardContent>
-           </Card>
-         </TabsContent>
-
-         <TabsContent value="track" className="animate-fade-in">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Search Panel */}
-              <Card className="glass-card border-none shadow-xl">
-           <CardHeader>
-             <CardTitle className="text-sm font-bold uppercase tracking-widest text-primary">Track Your File</CardTitle>
-           </CardHeader>
-           <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-xs font-bold font-mono">TRACKING ID / DIARY NO</Label>
-                <div className="flex gap-2">
-                  <Input 
-                    placeholder="e.g. FL-2024-1234" 
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                    className="bg-muted/20 border-border/50 h-10 font-mono text-sm"
-                  />
-                  <Button onClick={handleSearch} disabled={loading} className="bg-primary hover:bg-primary/90 px-3">
-                    {loading ? <Clock className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-                  </Button>
-                </div>
+        <TabsContent value="tray" className="animate-fade-in">
+          <Card className="glass-card border-none shadow-xl">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-xl font-bold flex items-center gap-2">
+                  <Inbox className="w-6 h-6 text-primary" />
+                  {sections.find(s => s.id === currentRole)?.name} - Departmental Tray
+                </CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">Files assigned to your section for processing</p>
               </div>
-              
-              {selectedBill && (
-                <div className="pt-4 border-t border-border/50 space-y-4 animate-fade-in">
-                   <div className="bg-primary/5 p-4 rounded-xl border border-primary/10">
-                      <p className="text-[10px] font-bold text-primary uppercase">Current Location</p>
-                      <h3 className="text-xl font-bold flex items-center gap-2 mt-1">
-                        <Building2 className="w-5 h-5 text-primary" />
-                        {selectedBill.status === 'pending' ? 'Bill Dispatch (Inward)' : selectedBill.forwarded_to.charAt(0).toUpperCase() + selectedBill.forwarded_to.slice(1) + ' Section'}
-                      </h3>
-                      <div className="flex items-center gap-2 mt-2">
-                         <span className="text-xs text-muted-foreground flex items-center gap-1">
-                           <Calendar className="w-3 h-3" /> Updated: {selectedBill.history ? new Date(selectedBill.history[selectedBill.history.length-1].date).toLocaleDateString() : 'N/A'}
-                         </span>
-                      </div>
-                   </div>
-
-                   <Button variant="outline" className="w-full gap-2 border-primary/20 hover:bg-primary/5" onClick={handlePrint}>
-                      <Printer className="w-4 h-4" /> Print Covering Page (Slip)
-                   </Button>
+            </CardHeader>
+            <CardContent>
+              {incomingFiles.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-20 text-muted-foreground bg-muted/5 rounded-xl border-2 border-dashed border-border/50">
+                  <Inbox className="w-16 h-16 opacity-10 mb-4" />
+                  <h3 className="text-lg font-bold">Your Tray is Empty</h3>
+                  <p className="text-sm">New files marked for your section will appear here.</p>
+                </div>
+              ) : (
+                <div className="rounded-md border border-border/50 overflow-hidden">
+                  <Table>
+                    <TableHeader className="bg-muted/50">
+                      <TableRow>
+                        <TableHead className="text-xs uppercase font-bold">Diary/Ref No</TableHead>
+                        <TableHead className="text-xs uppercase font-bold text-center">Track QR</TableHead>
+                        <TableHead className="text-xs uppercase font-bold">Subject</TableHead>
+                        <TableHead className="text-xs uppercase font-bold">Category</TableHead>
+                        <TableHead className="text-xs uppercase font-bold">From</TableHead>
+                        <TableHead className="text-xs uppercase font-bold">Date Marked</TableHead>
+                        <TableHead className="text-xs uppercase font-bold text-center">Action</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {incomingFiles.map((file, i) => (
+                        <TableRow key={i} className="hover:bg-primary/5 transition-colors group">
+                          <TableCell className="font-mono text-xs font-bold text-primary">{file.receiving_number}</TableCell>
+                          <TableCell className="text-center">
+                            {file.cfo_diary_number && (
+                              <div 
+                                className="cursor-zoom-in group/qr transition-transform hover:scale-110"
+                                onClick={() => handleQRClick(file.cfo_diary_number, file.receiving_number)}
+                              >
+                                <img 
+                                  src={`https://api.qrserver.com/v1/create-qr-code/?size=35x35&data=${encodeURIComponent(`${window.location.origin}/public-track/${file.cfo_diary_number}/${file.receiving_number}`)}`} 
+                                  alt="QR"
+                                  className="w-8 h-8 mx-auto opacity-70 group-hover:opacity-100 transition-opacity rounded border border-border bg-white"
+                                />
+                              </div>
+                            )}
+                          </TableCell>
+                          <TableCell className="font-semibold text-sm">{file.subject}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="text-[10px] uppercase">{file.mainCategory}</Badge>
+                          </TableCell>
+                          <TableCell className="text-xs">{file.received_from}</TableCell>
+                          <TableCell className="text-xs">{new Date(file.created_at).toLocaleDateString()}</TableCell>
+                          <TableCell className="text-center">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-8 gap-2 border-primary/20 hover:bg-primary hover:text-white transition-all"
+                              onClick={() => handleProcessFile(file)}
+                            >
+                              Review & Sign <ArrowRight className="w-3 h-3" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
               )}
-           </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-        {/* Content Panel */}
-        <div className="lg:col-span-2 space-y-6">
-           {!selectedBill ? (
-             <div className="h-full min-h-[400px] flex flex-col items-center justify-center text-center p-10 border-2 border-dashed border-border/50 rounded-2xl bg-muted/5">
-                <History className="w-16 h-16 text-muted-foreground/20 mb-4" />
-                <h3 className="text-lg font-bold text-muted-foreground">Search for a file to see its history</h3>
-                <p className="text-sm text-muted-foreground max-w-xs mx-auto">Enter the unique Tracking ID generated during bill entry to see where your file is currently located.</p>
-             </div>
-           ) : (
-             <div className="space-y-6 animate-fade-in">
-                {/* File Details */}
-                <Card className="glass-card border-none shadow-xl overflow-hidden">
-                   <div className="h-1 bg-gradient-to-r from-primary to-blue-400" />
-                   <CardHeader className="flex flex-row items-center justify-between pb-2 bg-muted/30">
+        <TabsContent value="track" className="animate-fade-in">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Search Panel */}
+            <Card className="glass-card border-none shadow-xl">
+              <CardHeader>
+                <CardTitle className="text-sm font-bold uppercase tracking-widest text-primary">Track Your File</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold font-mono">TRACKING ID / DIARY NO</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="e.g. FL-2024-1234"
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && handleSearch()}
+                      className="bg-muted/20 border-border/50 h-10 font-mono text-sm"
+                    />
+                    <Button onClick={handleSearch} disabled={loading} className="bg-primary hover:bg-primary/90 px-3">
+                      {loading ? <Clock className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                    </Button>
+                  </div>
+                </div>
+
+                {selectedBill && (
+                  <div className="pt-4 border-t border-border/50 space-y-4 animate-fade-in">
+                    <div className="bg-primary/5 p-4 rounded-xl border border-primary/10">
+                       <div className="flex justify-between items-start">
+                         <div>
+                           <p className="text-[10px] font-bold text-primary uppercase">Current Status</p>
+                           <h3 className="text-xl font-bold flex items-center gap-2 mt-1">
+                             <Building2 className="w-5 h-5 text-primary" />
+                             {selectedBill.mark_to ? sections.find(s => s.id === selectedBill.mark_to)?.name : "Registered"}
+                           </h3>
+                           <div className="mt-2 text-[10px] font-bold uppercase px-2 py-0.5 bg-primary/10 text-primary w-fit rounded">
+                              {selectedBill.current_status || "Processing"}
+                           </div>
+                         </div>
+                         <div 
+                           className="bg-white p-1 rounded-lg border border-primary/20 shadow-sm cursor-zoom-in hover:scale-110 transition-transform"
+                           onClick={() => handleQRClick(selectedBill.cfo_diary_number || selectedBill.diary_no, selectedBill.receiving_number || selectedBill.tracking_id)}
+                         >
+                           <img 
+                             src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(`${window.location.origin}/public-track/${selectedBill.cfo_diary_number || selectedBill.diary_no}/${selectedBill.receiving_number || selectedBill.tracking_id}`)}`} 
+                             alt="QR"
+                             className="w-12 h-12"
+                           />
+                         </div>
+                       </div>
+                    </div>
+
+                    <Button variant="outline" className="w-full gap-2 border-primary/20 hover:bg-primary/5 font-bold" onClick={handlePrint}>
+                      <Printer className="w-4 h-4" /> Print Covering Page (Slip)
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Content Panel */}
+            <div className="lg:col-span-2 space-y-6">
+              {!selectedBill ? (
+                <div className="h-full min-h-[400px] flex flex-col items-center justify-center text-center p-10 border-2 border-dashed border-border/50 rounded-2xl bg-muted/5">
+                  <History className="w-16 h-16 text-muted-foreground/20 mb-4" />
+                  <h3 className="text-lg font-bold text-muted-foreground">Search for a file to see its history</h3>
+                  <p className="text-sm text-muted-foreground max-w-xs mx-auto">Enter the unique Tracking ID generated during bill entry to see where your file is currently located.</p>
+                </div>
+              ) : (
+                <div className="space-y-6 animate-fade-in">
+                  {/* File Details */}
+                  <Card className="glass-card border-none shadow-xl overflow-hidden">
+                    <div className="h-1 bg-gradient-to-r from-primary to-blue-400" />
+                    <CardHeader className="flex flex-row items-center justify-between pb-2 bg-muted/30">
                       <CardTitle className="text-lg font-bold">File Specifications</CardTitle>
                       <span className="text-xs font-mono font-bold bg-primary/10 text-primary px-3 py-1 rounded-full">{selectedBill.tracking_id}</span>
-                   </CardHeader>
-                   <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
                       <div className="space-y-4">
-                         <div className="flex items-start gap-3">
-                            <User className="w-4 h-4 text-muted-foreground mt-1" />
-                            <div>
-                               <p className="text-[10px] font-bold text-muted-foreground uppercase">Party / Vendor</p>
-                               <p className="font-semibold">{selectedBill.party_name}</p>
-                            </div>
-                         </div>
-                         <div className="flex items-start gap-3">
-                            <FileText className="w-4 h-4 text-muted-foreground mt-1" />
-                            <div>
-                               <p className="text-[10px] font-bold text-muted-foreground uppercase">Subject</p>
-                               <p className="text-sm text-muted-foreground">{selectedBill.subject}</p>
-                            </div>
-                         </div>
+                        <div className="flex items-start gap-3">
+                          <User className="w-4 h-4 text-muted-foreground mt-1" />
+                          <div>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase">Party / Vendor</p>
+                            <p className="font-semibold">{selectedBill.party_name}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <FileText className="w-4 h-4 text-muted-foreground mt-1" />
+                          <div>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase">Subject</p>
+                            <p className="text-sm text-muted-foreground">{selectedBill.subject}</p>
+                          </div>
+                        </div>
                       </div>
                       <div className="space-y-4">
-                         <div className="flex items-start gap-3">
-                            <MapPin className="w-4 h-4 text-muted-foreground mt-1" />
-                            <div>
-                               <p className="text-[10px] font-bold text-muted-foreground uppercase">Diary Reference</p>
-                               <p className="font-mono text-sm">{selectedBill.diary_no}</p>
-                            </div>
-                         </div>
-                         <div className="flex items-start gap-3">
-                            <Clock className="w-4 h-4 text-muted-foreground mt-1" />
-                            <div>
-                               <p className="text-[10px] font-bold text-muted-foreground uppercase">Amount</p>
-                               <p className="font-bold text-primary">{formatCurrency(selectedBill.amount)}</p>
-                            </div>
-                         </div>
+                        <div className="flex items-start gap-3">
+                          <MapPin className="w-4 h-4 text-muted-foreground mt-1" />
+                          <div>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase">Diary Reference</p>
+                            <p className="font-mono text-sm">{selectedBill.diary_no}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <Clock className="w-4 h-4 text-muted-foreground mt-1" />
+                          <div>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase">Amount</p>
+                            <p className="font-bold text-primary">{formatCurrency(selectedBill.amount)}</p>
+                          </div>
+                        </div>
                       </div>
-                   </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
 
-                {/* Tracking Journey */}
-                <Card className="glass-card border-none shadow-xl relative">
-                   <CardHeader>
+                  {/* Tracking Journey */}
+                  <Card className="glass-card border-none shadow-xl relative">
+                    <CardHeader>
                       <CardTitle className="text-lg font-bold flex items-center gap-2">
                         <History className="w-5 h-5 text-primary" />
                         Movement History (Timeline)
                       </CardTitle>
-                   </CardHeader>
-                   <CardContent className="pb-10 pt-4">
+                    </CardHeader>
+                    <CardContent className="pb-10 pt-4">
                       <div className="relative space-y-8 before:absolute before:inset-0 before:ml-4 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-primary/50 before:via-primary/20 before:to-transparent">
                         {selectedBill.history?.map((step: any, index: number) => (
-                           <div key={index} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                              <div className="flex items-center justify-center w-8 h-8 rounded-full border border-primary/50 bg-background text-primary shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 group-hover:bg-primary group-hover:text-white transition-colors duration-200">
-                                 {index === selectedBill.history.length - 1 ? <MapPin className="w-4 h-4" /> : <CheckCircle2 className="w-4 h-4" />}
+                          <div key={index} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                            <div className="flex items-center justify-center w-8 h-8 rounded-full border border-primary/50 bg-background text-primary shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 group-hover:bg-primary group-hover:text-white transition-colors duration-200">
+                              {index === selectedBill.history.length - 1 ? <MapPin className="w-4 h-4" /> : <CheckCircle2 className="w-4 h-4" />}
+                            </div>
+                            <div className="w-[calc(100%-3rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-primary/10 bg-primary/5 shadow-sm group-hover:bg-primary/10 transition-colors duration-200">
+                              <div className="flex items-center justify-between space-x-2 mb-1">
+                                <div className="font-bold text-sm text-primary">{step.step}</div>
+                                <time className="font-mono text-[10px] text-muted-foreground">{new Date(step.date).toLocaleString()}</time>
                               </div>
-                              <div className="w-[calc(100%-3rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-primary/10 bg-primary/5 shadow-sm group-hover:bg-primary/10 transition-colors duration-200">
-                                 <div className="flex items-center justify-between space-x-2 mb-1">
-                                    <div className="font-bold text-sm text-primary">{step.step}</div>
-                                    <time className="font-mono text-[10px] text-muted-foreground">{new Date(step.date).toLocaleString()}</time>
-                                 </div>
-                                 <div className="text-xs font-semibold flex items-center gap-1 mb-2">
-                                    <Building2 className="w-3 h-3 text-muted-foreground" />
-                                    {step.location.toUpperCase()}
-                                 </div>
-                                 <div className="text-xs text-muted-foreground italic flex gap-1 items-start bg-background/50 p-2 rounded-md">
-                                    <MessageSquare className="w-3 h-3 mt-0.5 shrink-0" />
-                                    "{step.remarks}"
-                                 </div>
+                              <div className="text-xs font-semibold flex items-center gap-1 mb-2">
+                                <Building2 className="w-3 h-3 text-muted-foreground" />
+                                {step.location.toUpperCase()}
                               </div>
-                           </div>
+                              <div className="text-xs text-muted-foreground italic flex gap-1 items-start bg-background/50 p-2 rounded-md">
+                                <MessageSquare className="w-3 h-3 mt-0.5 shrink-0" />
+                                "{step.remarks}"
+                              </div>
+                            </div>
+                          </div>
                         ))}
                       </div>
-                   </CardContent>
-                </Card>
-             </div>
-            )}
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </TabsContent>
+        </TabsContent>
 
-      <TabsContent value="register" className="animate-fade-in">
-        <Card className="glass-card border-none shadow-xl">
-           <CardHeader className="flex flex-row items-center justify-between">
+        <TabsContent value="register" className="animate-fade-in">
+          <Card className="glass-card border-none shadow-xl">
+            <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                 <CardTitle className="text-xl font-bold flex items-center gap-2">
-                   <FileSignature className="w-6 h-6 text-primary" />
-                   File Registration Form
-                 </CardTitle>
-                 <p className="text-sm text-muted-foreground mt-1">Register new inward files and track their forward movement</p>
+                <CardTitle className="text-xl font-bold flex items-center gap-2">
+                  <FileSignature className="w-6 h-6 text-primary" />
+                  File Registration Form
+                </CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">Register new inward files and track their forward movement</p>
               </div>
               <div className="flex items-center gap-2">
-                 <Button variant="outline" onClick={handleFormReset} className="font-bold">Reset</Button>
-                 <Button onClick={handleSaveForm} disabled={isSavingForm} className="bg-primary hover:bg-primary/90 font-bold gap-2">
-                    {isSavingForm ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                    Save Record
-                 </Button>
+                <Button variant="outline" onClick={handleFormReset} className="font-bold">Reset</Button>
+                <Button onClick={handleSaveForm} disabled={isSavingForm} className="bg-primary hover:bg-primary/90 font-bold gap-2">
+                  {isSavingForm ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  Save Record
+                </Button>
               </div>
-           </CardHeader>
-           <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-6 border-t border-border/50">
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-6 border-t border-border/50">
               <div className="space-y-2">
                 <Label className="text-xs uppercase font-bold text-muted-foreground">CFO Office Diary No <span className="text-red-500">*</span></Label>
-                <Input 
-                  placeholder="e.g. CFO-2024-001" 
+                <Input
+                  placeholder="e.g. CFO-2024-001"
                   value={formData.cfo_diary_number}
                   readOnly={currentRole !== 'cfo'}
-                  onChange={e => setFormData({...formData, cfo_diary_number: e.target.value})}
-                  className={`bg-muted/20 border-border/50 font-mono ${currentRole !== 'cfo' ? 'opacity-70 cursor-not-allowed' : ''}`} 
+                  onChange={e => setFormData({ ...formData, cfo_diary_number: e.target.value })}
+                  className={`bg-muted/20 border-border/50 font-mono ${currentRole !== 'cfo' ? 'opacity-70 cursor-not-allowed' : ''}`}
                 />
               </div>
 
               <div className="space-y-2">
                 <Label className="text-xs uppercase font-bold text-muted-foreground">Inward Date</Label>
-                <Input 
+                <Input
                   type="date"
                   value={formData.inward_date}
                   readOnly={currentRole !== 'cfo'}
-                  onChange={e => setFormData({...formData, inward_date: e.target.value})}
-                  className={`bg-muted/20 border-border/50 ${currentRole !== 'cfo' ? 'opacity-70 cursor-not-allowed' : ''}`} 
+                  onChange={e => setFormData({ ...formData, inward_date: e.target.value })}
+                  className={`bg-muted/20 border-border/50 ${currentRole !== 'cfo' ? 'opacity-70 cursor-not-allowed' : ''}`}
                 />
               </div>
 
               <div className="space-y-2">
                 <Label className="text-xs uppercase font-bold text-muted-foreground">Received From Section <span className="text-red-500">*</span></Label>
-                <Input 
-                  placeholder="Department or Section" 
+                <Input
+                  placeholder="Department or Section"
                   value={formData.received_from}
                   readOnly={currentRole !== 'cfo'}
-                  onChange={e => setFormData({...formData, received_from: e.target.value})}
-                  className={`bg-muted/20 border-border/50 ${currentRole !== 'cfo' ? 'opacity-70 cursor-not-allowed' : ''}`} 
+                  onChange={e => setFormData({ ...formData, received_from: e.target.value })}
+                  className={`bg-muted/20 border-border/50 ${currentRole !== 'cfo' ? 'opacity-70 cursor-not-allowed' : ''}`}
                 />
               </div>
 
               <div className="space-y-2">
                 <Label className="text-xs uppercase font-bold text-muted-foreground">Receiving Number</Label>
-                <Input 
+                <Input
                   value={formData.receiving_number}
                   readOnly
-                  className="bg-muted/5 border-border/50 font-mono opacity-70" 
+                  className="bg-muted/5 border-border/50 font-mono opacity-70"
                 />
               </div>
 
               <div className="space-y-2">
                 <Label className="text-xs uppercase font-bold text-muted-foreground">Main Category <span className="text-red-500">*</span></Label>
-                <Select 
-                  value={formData.mainCategory} 
-                  onValueChange={v => setFormData({...formData, mainCategory: v, subCategory: ""})}
+                <Select
+                  value={formData.mainCategory}
+                  onValueChange={v => setFormData({ ...formData, mainCategory: v, subCategory: "" })}
                 >
                   <SelectTrigger className="bg-muted/20 border-border/50">
                     <SelectValue placeholder="Select Main Category" />
@@ -879,9 +950,9 @@ export default function FileTracking() {
 
               <div className="space-y-2">
                 <Label className="text-xs uppercase font-bold text-muted-foreground">Sub Category <span className="text-red-500">*</span></Label>
-                <Select 
-                  value={formData.subCategory} 
-                  onValueChange={v => setFormData({...formData, subCategory: v})}
+                <Select
+                  value={formData.subCategory}
+                  onValueChange={v => setFormData({ ...formData, subCategory: v })}
                   disabled={!formData.mainCategory}
                 >
                   <SelectTrigger className="bg-muted/20 border-border/50">
@@ -897,17 +968,17 @@ export default function FileTracking() {
 
               <div className="space-y-2 lg:col-span-1">
                 <Label className="text-xs uppercase font-bold text-muted-foreground">Subject <span className="text-red-500">*</span></Label>
-                <Input 
-                  placeholder="Purpose of file" 
+                <Input
+                  placeholder="Purpose of file"
                   value={formData.subject}
-                  onChange={e => setFormData({...formData, subject: e.target.value})}
-                  className="bg-muted/20 border-border/50" 
+                  onChange={e => setFormData({ ...formData, subject: e.target.value })}
+                  className="bg-muted/20 border-border/50"
                 />
               </div>
 
               <div className="space-y-4">
                 <Label className="text-xs uppercase font-bold text-muted-foreground">Digital Authorization (E-Signature)</Label>
-                
+
                 {!formData.signature_data ? (
                   <Dialog open={isSignDialogOpen} onOpenChange={setIsSignDialogOpen}>
                     <DialogTrigger asChild>
@@ -926,7 +997,7 @@ export default function FileTracking() {
                           Choose to draw your signature or upload an image of your physical signature.
                         </DialogDescription>
                       </DialogHeader>
-                      
+
                       <Tabs defaultValue="draw" className="w-full mt-4">
                         <TabsList className="grid w-full grid-cols-2">
                           <TabsTrigger value="draw" className="gap-2">
@@ -939,7 +1010,7 @@ export default function FileTracking() {
 
                         <TabsContent value="draw" className="flex flex-col items-center gap-4 py-4 animate-in fade-in-50 duration-300">
                           <div className="border-2 border-border rounded-lg bg-white overflow-hidden touch-none">
-                            <canvas 
+                            <canvas
                               ref={canvasRef}
                               width={450}
                               height={200}
@@ -968,24 +1039,24 @@ export default function FileTracking() {
                         </TabsContent>
 
                         <TabsContent value="upload" className="flex flex-col items-center gap-6 py-10 animate-in slide-in-from-bottom-2 duration-300">
-                          <div 
+                          <div
                             className="w-full max-w-[300px] border-2 border-dashed border-border rounded-xl p-10 flex flex-col items-center gap-4 hover:border-primary/50 hover:bg-primary/5 cursor-pointer transition-all group"
                             onClick={() => document.getElementById('signature-image-upload')?.click()}
                           >
-                             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                               <ImageIcon className="w-8 h-8" />
-                             </div>
-                             <div className="text-center">
-                               <p className="text-sm font-bold">Select Signature Image</p>
-                               <p className="text-[10px] text-muted-foreground mt-1">PNG, JPG or JPEG (Max 2MB)</p>
-                             </div>
-                             <input 
-                               type="file" 
-                               id="signature-image-upload" 
-                               hidden 
-                               accept="image/*" 
-                               onChange={handleSignatureUpload}
-                             />
+                            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                              <ImageIcon className="w-8 h-8" />
+                            </div>
+                            <div className="text-center">
+                              <p className="text-sm font-bold">Select Signature Image</p>
+                              <p className="text-[10px] text-muted-foreground mt-1">PNG, JPG or JPEG (Max 2MB)</p>
+                            </div>
+                            <input
+                              type="file"
+                              id="signature-image-upload"
+                              hidden
+                              accept="image/*"
+                              onChange={handleSignatureUpload}
+                            />
                           </div>
                           <p className="text-center text-[10px] text-muted-foreground max-w-[300px]">
                             Tip: For best results, use a high-contrast image (black ink on white paper).
@@ -997,16 +1068,16 @@ export default function FileTracking() {
                 ) : (
                   <div className="relative group">
                     <div className="border-2 border-emerald-500/30 rounded-lg p-2 bg-emerald-500/5 flex flex-col items-center overflow-hidden">
-                       <img src={formData.signature_data} alt="ESign" className="max-h-16 mix-blend-multiply" />
-                       <div className="mt-2 text-[8px] font-mono text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                         VERIFIED: {new Date(formData.date_of_sign).toLocaleDateString()}
-                       </div>
+                      <img src={formData.signature_data} alt="ESign" className="max-h-16 mix-blend-multiply" />
+                      <div className="mt-2 text-[8px] font-mono text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                        VERIFIED: {new Date(formData.date_of_sign).toLocaleDateString()}
+                      </div>
                     </div>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
-                      onClick={() => setFormData({...formData, signature_data: ""})}
+                      onClick={() => setFormData({ ...formData, signature_data: "" })}
                     >
                       <Trash2 className="w-3 h-3" />
                     </Button>
@@ -1016,209 +1087,267 @@ export default function FileTracking() {
 
               <div className="space-y-2">
                 <Label className="text-xs uppercase font-bold text-muted-foreground">Date of Sign</Label>
-                <Input 
+                <Input
                   type="date"
                   value={formData.date_of_sign}
-                  onChange={e => setFormData({...formData, date_of_sign: e.target.value})}
-                  className="bg-muted/20 border-border/50 text-blue-500 font-bold" 
+                  onChange={e => setFormData({ ...formData, date_of_sign: e.target.value })}
+                  className="bg-muted/20 border-border/50 text-blue-500 font-bold"
                 />
               </div>
 
               <div className="space-y-2">
                 <Label className="text-xs uppercase font-bold text-muted-foreground">Mark To (Forward) <span className="text-red-500">*</span></Label>
-                <Select value={formData.mark_to} onValueChange={v => setFormData({...formData, mark_to: v})}>
+                <Select value={formData.mark_to} onValueChange={v => setFormData({ ...formData, mark_to: v })}>
                   <SelectTrigger className="bg-muted/20 border-border/50 border-primary/30">
                     <SelectValue placeholder="Target Section" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="cfo">CFO Office (Return/Approval)</SelectItem>
-                    <SelectItem value="medical">Medical Section</SelectItem>
-                    <SelectItem value="contractor">Contractor Section</SelectItem>
-                    <SelectItem value="security_deposit">Security Deposit Section</SelectItem>
-                    <SelectItem value="pol_bills">POL Bills Section</SelectItem>
-                    <SelectItem value="contingencies">Contingencies Section</SelectItem>
-                    <SelectItem value="director_finance">Director Finance</SelectItem>
+                    <SelectItem value="cfo">CFO</SelectItem>
+                    <SelectItem value="cia">CIA</SelectItem>
+                    <SelectItem value="budget">BUDGET</SelectItem>
+                    <SelectItem value="pension">PENSION</SelectItem>
+                    <SelectItem value="fund">FUND</SelectItem>
+                    <SelectItem value="internal_audit_1">INTERNAL AUDIT-1</SelectItem>
+                    <SelectItem value="director_account">DIRECTOR ACCOUNT</SelectItem>
+                    <SelectItem value="director_finance">DIRECTOR FINANCE</SelectItem>
+                    <SelectItem value="medical">MEDICAL</SelectItem>
+                    <SelectItem value="contractor">CONTRACTOR</SelectItem>
+                    <SelectItem value="security_deposit">SECURITY DEPOSIT</SelectItem>
+                    <SelectItem value="pol_bills">POL BILLS</SelectItem>
+                    <SelectItem value="contingencies">CONTINGENCIES</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
                 <Label className="text-xs uppercase font-bold text-muted-foreground">Outward (Forwarding) Date</Label>
-                <Input 
+                <Input
                   type="date"
                   value={formData.outward_date}
-                  onChange={e => setFormData({...formData, outward_date: e.target.value})}
-                  className="bg-muted/20 border-border/50" 
+                  onChange={e => setFormData({ ...formData, outward_date: e.target.value })}
+                  className="bg-muted/20 border-border/50"
                 />
               </div>
 
               <div className="space-y-2 lg:col-span-3">
                 <Label className="text-xs uppercase font-bold text-muted-foreground">Remarks</Label>
-                <Input 
-                  placeholder="Any additional notes..." 
+                <Input
+                  placeholder="Any additional notes..."
                   value={formData.remarks}
-                  onChange={e => setFormData({...formData, remarks: e.target.value})}
-                  className="bg-muted/20 border-border/50" 
+                  onChange={e => setFormData({ ...formData, remarks: e.target.value })}
+                  className="bg-muted/20 border-border/50"
                 />
               </div>
-           </CardContent>
+            </CardContent>
 
-           {/* Journey History at the Bottom */}
-           {records.find(r => r.receiving_number === formData.receiving_number) && (
-             <div className="border-t border-border/50 bg-muted/10 p-6">
+            {/* Journey History at the Bottom */}
+            {records.find(r => r.receiving_number === formData.receiving_number) && (
+              <div className="border-t border-border/50 bg-muted/10 p-6">
                 <h3 className="text-sm font-bold uppercase tracking-widest text-primary mb-6 flex items-center gap-2">
                   <History className="w-5 h-5" /> Detailed File Movement Record
                 </h3>
                 <div className="space-y-0 ml-4 border-l-2 border-primary/20">
-                   {records.find(r => r.receiving_number === formData.receiving_number)?.history.map((step: any, i: number) => (
-                     <div key={i} className="relative pb-8 pl-8 last:pb-0">
-                        <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-primary flex items-center justify-center">
-                           <div className="w-2 h-2 bg-white rounded-full"></div>
-                        </div>
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-1">
-                           <span className="text-xs font-black text-primary uppercase bg-primary/10 px-2 py-0.5 rounded">Action Log #{i+1}</span>
-                           <span className="text-[10px] font-mono text-muted-foreground">{new Date(step.date).toLocaleString()}</span>
-                        </div>
-                        <div className="bg-background rounded-lg border border-border p-3 shadow-sm hover:border-primary/50 transition-colors">
-                           <div className="flex items-center justify-between gap-4 text-sm font-bold mb-2 pb-2 border-b border-border/50">
-                             <div className="flex items-center gap-2">
-                               <User className="w-4 h-4 text-muted-foreground" />
-                               {step.processed_by}
-                             </div>
-                             
-                             <Dialog>
-                               <DialogTrigger asChild>
-                                  <Button variant="ghost" size="sm" className="h-6 text-[10px] gap-1 hover:bg-primary/10 text-primary">
-                                    <FileSearch className="w-3 h-3" /> View Log Details
-                                  </Button>
-                               </DialogTrigger>
-                               <DialogContent className="max-w-2xl">
-                                  <DialogHeader>
-                                    <DialogTitle>Log Snapshot: {step.processed_by}</DialogTitle>
-                                    <DialogDescription>Full data captured at {new Date(step.date).toLocaleString()}</DialogDescription>
-                                  </DialogHeader>
-                                  <div className="grid grid-cols-2 gap-4 mt-4 p-4 bg-muted/20 rounded-xl border border-border">
-                                     <div>
-                                        <p className="text-[10px] font-bold text-muted-foreground uppercase">Main Category</p>
-                                        <p className="text-sm font-semibold">{step.mainCategory.toUpperCase()}</p>
-                                     </div>
-                                     <div>
-                                        <p className="text-[10px] font-bold text-muted-foreground uppercase">Sub Category</p>
-                                        <p className="text-sm font-semibold">{step.subCategory.replace(/_/g, " ").toUpperCase()}</p>
-                                     </div>
-                                     <div className="col-span-2">
-                                        <p className="text-[10px] font-bold text-muted-foreground uppercase">Subject</p>
-                                        <p className="text-sm font-semibold bg-background p-2 rounded border border-border/50">{step.subject}</p>
-                                     </div>
-                                     <div className="col-span-2">
-                                        <p className="text-[10px] font-bold text-muted-foreground uppercase">Remarks</p>
-                                        <p className="text-xs text-muted-foreground italic bg-background p-2 rounded border border-border/20">&ldquo;{step.remarks}&rdquo;</p>
-                                     </div>
-                                     {step.signature_data && (
-                                       <div className="col-span-2">
-                                          <p className="text-[10px] font-bold text-muted-foreground uppercase mb-2">Digital Signature</p>
-                                          <img src={step.signature_data} alt="Sign" className="h-16 border rounded bg-white p-1" />
-                                       </div>
-                                     )}
-                                     <div>
-                                        <p className="text-[10px] font-bold text-muted-foreground uppercase">Marked To</p>
-                                        <Badge>{step.mark_to.toUpperCase()}</Badge>
-                                     </div>
+                  {records.find(r => r.receiving_number === formData.receiving_number)?.history.map((step: any, i: number) => (
+                    <div key={i} className="relative pb-8 pl-8 last:pb-0">
+                      <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-primary flex items-center justify-center">
+                        <div className="w-2 h-2 bg-white rounded-full"></div>
+                      </div>
+                      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-1">
+                        <span className="text-xs font-black text-primary uppercase bg-primary/10 px-2 py-0.5 rounded">Action Log #{i + 1}</span>
+                        <span className="text-[10px] font-mono text-muted-foreground">{new Date(step.date).toLocaleString()}</span>
+                      </div>
+                      <div className="bg-background rounded-lg border border-border p-3 shadow-sm hover:border-primary/50 transition-colors">
+                        <div className="flex items-center justify-between gap-4 text-sm font-bold mb-2 pb-2 border-b border-border/50">
+                          <div className="flex items-center gap-2">
+                            <User className="w-4 h-4 text-muted-foreground" />
+                            {step.processed_by}
+                          </div>
+
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button variant="ghost" size="sm" className="h-6 text-[10px] gap-1 hover:bg-primary/10 text-primary">
+                                <FileSearch className="w-3 h-3" /> View Log Details
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl">
+                              <DialogHeader>
+                                <DialogTitle>Log Snapshot: {step.processed_by}</DialogTitle>
+                                <DialogDescription>Full data captured at {new Date(step.date).toLocaleString()}</DialogDescription>
+                              </DialogHeader>
+                              <div className="grid grid-cols-2 gap-4 mt-4 p-4 bg-muted/20 rounded-xl border border-border">
+                                <div>
+                                  <p className="text-[10px] font-bold text-muted-foreground uppercase">Main Category</p>
+                                  <p className="text-sm font-semibold">{step.mainCategory.toUpperCase()}</p>
+                                </div>
+                                <div>
+                                  <p className="text-[10px] font-bold text-muted-foreground uppercase">Sub Category</p>
+                                  <p className="text-sm font-semibold">{step.subCategory.replace(/_/g, " ").toUpperCase()}</p>
+                                </div>
+                                <div className="col-span-2">
+                                  <p className="text-[10px] font-bold text-muted-foreground uppercase">Subject</p>
+                                  <p className="text-sm font-semibold bg-background p-2 rounded border border-border/50">{step.subject}</p>
+                                </div>
+                                <div className="col-span-2">
+                                  <p className="text-[10px] font-bold text-muted-foreground uppercase">Remarks</p>
+                                  <p className="text-xs text-muted-foreground italic bg-background p-2 rounded border border-border/20">&ldquo;{step.remarks}&rdquo;</p>
+                                </div>
+                                {step.signature_data && (
+                                  <div className="col-span-2">
+                                    <p className="text-[10px] font-bold text-muted-foreground uppercase mb-2">Digital Signature</p>
+                                    <img src={step.signature_data} alt="Sign" className="h-16 border rounded bg-white p-1" />
                                   </div>
-                               </DialogContent>
-                             </Dialog>
-                           </div>
-                           <p className="text-xs text-muted-foreground italic line-clamp-2">&ldquo;{step.remarks}&rdquo;</p>
+                                )}
+                                <div>
+                                  <p className="text-[10px] font-bold text-muted-foreground uppercase">Marked To</p>
+                                  <Badge>{step.mark_to.toUpperCase()}</Badge>
+                                </div>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
                         </div>
-                     </div>
-                   ))}
+                        <p className="text-xs text-muted-foreground italic line-clamp-2">&ldquo;{step.remarks}&rdquo;</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-             </div>
-           )}
-        </Card>
-      </TabsContent>
+              </div>
+            )}
+          </Card>
+        </TabsContent>
       </Tabs>
 
       {/* Hidden Printable Covering Page */}
       <div className="print-only hidden">
         <div ref={printRef} className="p-10 font-sans text-black bg-white min-h-[11in] w-[8.5in] relative">
-           {/* Header */}
-           <div className="text-center border-b-2 border-black pb-4 mb-8">
+          {/* Header */}
+          <div className="text-center border-b-2 border-black pb-4 mb-8 flex justify-between items-end">
+            <div className="text-left">
               <h1 className="text-2xl font-black uppercase tracking-tighter">Karachi Water & Sewerage Board</h1>
               <h2 className="text-lg font-bold uppercase mt-1">Finance Department - File Movement Slip</h2>
-              <div className="flex justify-between mt-4 font-mono text-xs">
-                 <span>Ref No: {selectedBill?.diary_no}</span>
-                 <span>Tracking ID: {selectedBill?.tracking_id}</span>
+              <div className="flex gap-6 mt-4 font-mono text-xs">
+                <span>Ref No: {selectedBill?.diary_no}</span>
+                <span>Tracking ID: {selectedBill?.tracking_id}</span>
               </div>
-           </div>
+            </div>
+            {selectedBill && (
+              <div className="flex flex-col items-center gap-1">
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(`${window.location.origin}/public-track/${selectedBill.cfo_diary_number || selectedBill.diary_no}/${selectedBill.receiving_number || selectedBill.tracking_id}`)}`}
+                  alt="QR Code"
+                  className="w-24 h-24 border border-black p-1"
+                />
+                <span className="text-[8px] font-bold font-mono">{selectedBill.receiving_number || selectedBill.tracking_id}</span>
+              </div>
+            )}
+          </div>
 
-           {/* File Overview */}
-           <div className="grid grid-cols-2 gap-8 mb-10">
-              <div className="space-y-4">
-                 <div>
-                    <p className="text-[10px] font-bold uppercase text-gray-500">Party / Vendor Name</p>
-                    <p className="text-base font-bold underline underline-offset-4">{selectedBill?.party_name}</p>
-                 </div>
-                 <div>
-                    <p className="text-[10px] font-bold uppercase text-gray-500">Subject / Nature of Work</p>
-                    <p className="text-sm border-b border-dotted border-gray-400 pb-1">{selectedBill?.subject}</p>
-                 </div>
+          {/* File Overview */}
+          <div className="grid grid-cols-2 gap-8 mb-10">
+            <div className="space-y-4">
+              <div>
+                <p className="text-[10px] font-bold uppercase text-gray-500">Party / Vendor Name</p>
+                <p className="text-base font-bold underline underline-offset-4">{selectedBill?.party_name}</p>
               </div>
-              <div className="space-y-4">
-                 <div>
-                    <p className="text-[10px] font-bold uppercase text-gray-500">Date Received in Finance</p>
-                    <p className="text-base font-bold">{selectedBill?.received_date}</p>
-                 </div>
-                 <div>
-                    <p className="text-[10px] font-bold uppercase text-gray-500">Amount Claimed</p>
-                    <p className="text-base font-bold">{formatCurrency(selectedBill?.amount)}</p>
-                 </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase text-gray-500">Subject / Nature of Work</p>
+                <p className="text-sm border-b border-dotted border-gray-400 pb-1">{selectedBill?.subject}</p>
               </div>
-           </div>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <p className="text-[10px] font-bold uppercase text-gray-500">Date Received in Finance</p>
+                <p className="text-base font-bold">{selectedBill?.received_date}</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase text-gray-500">Amount Claimed</p>
+                <p className="text-base font-bold">{formatCurrency(selectedBill?.amount)}</p>
+              </div>
+            </div>
+          </div>
 
-           {/* Movement Table */}
-           <div className="mt-8">
-              <h3 className="text-sm font-bold uppercase mb-4 bg-gray-100 p-2">Chronological Movement Record</h3>
-              <table className="w-full border-collapse border border-black text-xs">
-                 <thead>
-                    <tr className="bg-gray-50">
-                       <th className="border border-black p-2 text-left w-12">SN</th>
-                       <th className="border border-black p-2 text-left">Department / Section</th>
-                       <th className="border border-black p-2 text-left">Date & Time</th>
-                       <th className="border border-black p-2 text-left">Action Taken / Remarks</th>
-                       <th className="border border-black p-2 text-left w-24">Signature</th>
+          {/* Movement Table */}
+          <div className="mt-8">
+            <h3 className="text-sm font-bold uppercase mb-4 bg-gray-100 p-2">Chronological Movement Record</h3>
+            <table className="w-full border-collapse border border-black text-xs">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="border border-black p-2 text-left w-12">SN</th>
+                  <th className="border border-black p-2 text-left">Department / Section</th>
+                  <th className="border border-black p-2 text-left">Date & Time</th>
+                  <th className="border border-black p-2 text-left">Action Taken / Remarks</th>
+                  <th className="border border-black p-2 text-left w-24">Signature</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => {
+                  const step = selectedBill?.history?.[i - 1];
+                  return (
+                    <tr key={i} className="h-16">
+                      <td className="border border-black p-2 text-center font-bold">{i}</td>
+                      <td className="border border-black p-2 text-sm font-semibold">{step?.location || ""}</td>
+                      <td className="border border-black p-2 font-mono text-[10px]">{step ? new Date(step.date).toLocaleString() : ""}</td>
+                      <td className="border border-black p-2 text-gray-600">{step?.remarks || ""}</td>
+                      <td className="border border-black p-2"></td>
                     </tr>
-                 </thead>
-                 <tbody>
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => {
-                       const step = selectedBill?.history?.[i-1];
-                       return (
-                          <tr key={i} className="h-16">
-                             <td className="border border-black p-2 text-center font-bold">{i}</td>
-                             <td className="border border-black p-2 text-sm font-semibold">{step?.location || ""}</td>
-                             <td className="border border-black p-2 font-mono text-[10px]">{step ? new Date(step.date).toLocaleString() : ""}</td>
-                             <td className="border border-black p-2 text-gray-600">{step?.remarks || ""}</td>
-                             <td className="border border-black p-2"></td>
-                          </tr>
-                       );
-                    })}
-                 </tbody>
-              </table>
-           </div>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
 
-           {/* Footer */}
-           <div className="absolute bottom-10 left-10 right-10 flex justify-between items-end border-t border-black pt-4">
-              <div className="text-[10px] font-mono">
-                 <p>Generated by: FinLedger Software</p>
-                 <p>Timestamp: {new Date().toLocaleString()}</p>
-              </div>
-              <div className="text-center w-48">
-                 <div className="border-t border-black mb-1"></div>
-                 <p className="text-[10px] font-bold uppercase">Section Officer (Finance)</p>
-              </div>
-           </div>
+          {/* Footer */}
+          <div className="absolute bottom-10 left-10 right-10 flex justify-between items-end border-t border-black pt-4">
+            <div className="text-[10px] font-mono">
+              <p>Generated by: FinLedger Software</p>
+              <p>Timestamp: {new Date().toLocaleString()}</p>
+            </div>
+            <div className="text-center w-48">
+              <div className="border-t border-black mb-1"></div>
+              <p className="text-[10px] font-bold uppercase">Section Officer (Finance)</p>
+            </div>
+          </div>
         </div>
       </div>
+      {/* Full Screen QR Modal */}
+      <Dialog open={!!qrFullScreen} onOpenChange={(open) => !open && setQrFullScreen(null)}>
+        <DialogContent className="sm:max-w-[450px] p-0 overflow-hidden rounded-3xl border-none">
+          <div className="bg-primary p-8 flex flex-col items-center gap-6 text-center">
+            <div className="bg-white p-4 rounded-3xl shadow-2xl scale-110 transition-transform">
+              {qrFullScreen && (
+                <img 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(`${window.location.origin}/public-track/${qrFullScreen.diary}/${qrFullScreen.receiving}`)}`} 
+                  alt="QR Full"
+                  className="w-64 h-64"
+                />
+              )}
+            </div>
+            
+            <div className="text-white space-y-2">
+              <h2 className="text-2xl font-black uppercase tracking-tight">Verified Tracking Code</h2>
+              <p className="text-primary-foreground/70 text-sm font-medium">Scan with any mobile device to see real-time movement history</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 w-full mt-2">
+               <div className="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/20">
+                  <p className="text-[10px] uppercase font-bold text-white/60">Diary No</p>
+                  <p className="text-sm font-mono font-bold text-white">{qrFullScreen?.diary}</p>
+               </div>
+               <div className="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/20">
+                  <p className="text-[10px] uppercase font-bold text-white/60">Receiving No</p>
+                  <p className="text-sm font-mono font-bold text-white">{qrFullScreen?.receiving}</p>
+               </div>
+            </div>
+
+            <Button 
+              variant="outline" 
+              className="w-full bg-white text-primary border-none font-bold hover:bg-zinc-100"
+              onClick={() => window.print()}
+            >
+              <Printer className="w-4 h-4 mr-2" /> Print QR Code
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

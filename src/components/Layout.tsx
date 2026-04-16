@@ -25,9 +25,12 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { useTheme } from "@/components/ThemeProvider";
+import { Sun, Moon } from "lucide-react";
 
-const navItems = [
+const topNavItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
+  { to: "/book-section/file-tracking", icon: Shield, label: "File Tracking" },
 ];
 
 const categories = [
@@ -35,9 +38,25 @@ const categories = [
     id: "book-section",
     label: "Book Section",
     items: [
-      { to: "/book-section/file-tracking", label: "File Tracking" },
+      { to: "/book-section/regular-employee", label: "Regular Employee", icon: Users },
+      { to: "/book-section/retired-employee", label: "Retired Employee", icon: Users },
+      { to: "/book-section/emp-details", label: "Employee Details", icon: ListTree },
+      { to: "/book-section/medical", label: "Medical Section", icon: Stethoscope },
+      { to: "/book-section/contractor", label: "Contractor Section", icon: Briefcase },
+      { to: "/book-section/security-deposit", label: "Security Deposit", icon: Lock },
+      { to: "/book-section/pol-bills", label: "POL Bills", icon: FileText },
+      { to: "/book-section/contigencies", label: "Contingencies", icon: AlertCircle },
+      { to: "/book-section/bill-dispatch", label: "Bill Dispatch", icon: ArrowLeftRight },
     ]
   }
+];
+
+const bottomNavItems = [
+  { to: "/general-ledger", icon: BookOpen, label: "General Ledger" },
+  { to: "/book-section/cheque-record", icon: CreditCard, label: "Cheque Record" },
+  { to: "/bank-accounts", icon: Landmark, label: "Bank Accounts" },
+  { to: "/transactions", icon: ArrowLeftRight, label: "Transactions" },
+  { to: "/bank-entries", icon: CreditCard, label: "Bank Entries" },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -46,6 +65,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [openCategory, setOpenCategory] = useState<string | null>("book-section");
   const location = useLocation();
   const { signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const mainRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
@@ -99,7 +119,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
 
         <nav className="flex-1 py-4 space-y-1 px-2 overflow-y-auto">
-          {navItems.map((item) => (
+          {topNavItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
@@ -145,13 +165,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                           to={item.to}
                           className={({ isActive }) =>
                             cn(
-                              "px-8 py-2 text-sm transition-colors flex items-center",
+                              "px-8 py-2 text-sm transition-colors flex items-center gap-2",
                               isActive
-                                ? "text-primary font-medium"
+                                ? "text-primary font-medium bg-primary/5"
                                 : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
                             )
                           }
                         >
+                          {item.icon && <item.icon className="w-3.5 h-3.5 shrink-0 opacity-70" />}
                           <span className="truncate">{item.label}</span>
                         </NavLink>
                       ))}
@@ -160,7 +181,26 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </div>
               );
             })}
-            
+          </div>
+
+          <div className="pt-2 border-t border-border/50 space-y-1">
+            {bottomNavItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors",
+                    isActive
+                      ? "bg-primary/10 text-primary font-medium"
+                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  )
+                }
+              >
+                <item.icon className="w-4 h-4 shrink-0" />
+                {!collapsed && <span className="truncate">{item.label}</span>}
+              </NavLink>
+            ))}
           </div>
         </nav>
 
@@ -175,6 +215,27 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           >
             <LogOut className="w-4 h-4 shrink-0" />
             {!collapsed && <span>Logout</span>}
+          </button>
+
+          <button
+            onClick={toggleTheme}
+            className={cn(
+              "flex items-center gap-3 w-full px-3 py-2 rounded-md text-sm transition-colors hover:bg-sidebar-accent",
+              collapsed && "justify-center"
+            )}
+            title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            {theme === "dark" ? (
+              <>
+                <Sun className="w-4 h-4 shrink-0 text-yellow-500" />
+                {!collapsed && <span>Light Mode</span>}
+              </>
+            ) : (
+              <>
+                <Moon className="w-4 h-4 shrink-0 text-indigo-400" />
+                {!collapsed && <span>Dark Mode</span>}
+              </>
+            )}
           </button>
           
           <button

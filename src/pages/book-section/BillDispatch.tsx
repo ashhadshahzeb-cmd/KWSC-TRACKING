@@ -40,6 +40,13 @@ export default function BillDispatch() {
   const [diaryEntries, setDiaryEntries] = useState<any[]>([]);
   const [forwardDialogOpen, setForwardDialogOpen] = useState(false);
   const [viewScanOpen, setViewScanOpen] = useState(false);
+  const [qrDialogOpen, setQrDialogOpen] = useState(false);
+  const [selectedQR, setSelectedQR] = useState({ diary: "", tracking: "" });
+
+  const handleQRClick = (diary: string, tracking: string) => {
+    setSelectedQR({ diary, tracking });
+    setQrDialogOpen(true);
+  };
   const [selectedEntry, setSelectedEntry] = useState<any>(null);
   const [targetSection, setTargetSection] = useState("");
   
@@ -267,11 +274,14 @@ export default function BillDispatch() {
         // 2. Prepare navigation path
         let path = "";
         switch(targetSection) {
-            case 'medical': path = "/book-section/medical"; break;
-            case 'contractor': path = "/book-section/contractor"; break;
-            case 'security_deposit': path = "/book-section/security-deposit"; break;
-            case 'pol_bills': path = "/book-section/pol-bills"; break;
-            case 'contingencies': path = "/book-section/contigencies"; break;
+            case 'cfo': path = "/book-section/file-tracking"; break;
+            case 'cia': path = "/book-section/file-tracking"; break;
+            case 'budget': path = "/book-section/file-tracking"; break;
+            case 'pension': path = "/book-section/file-tracking"; break;
+            case 'fund': path = "/book-section/file-tracking"; break;
+            case 'internal_audit_1': path = "/book-section/file-tracking"; break;
+            case 'director_account': path = "/book-section/file-tracking"; break;
+            default: path = "/book-section/file-tracking";
         }
 
         toast.dismiss();
@@ -303,7 +313,7 @@ export default function BillDispatch() {
         <div>
           <h1 className="text-2xl font-bold font-heading flex items-center gap-2">
             <ClipboardList className="w-7 h-7 text-primary" />
-            Inward Bill Dispatch (Dairy)
+            Inward Bill Dispatch (Diary)
           </h1>
           <p className="text-sm text-muted-foreground font-sans">Centralized bill receiving and department forwarding system</p>
         </div>
@@ -348,7 +358,21 @@ export default function BillDispatch() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-bold uppercase">Diary Number</Label>
+              <div className="flex justify-between items-end">
+                <Label className="text-[10px] font-bold uppercase">Diary Number</Label>
+                 {formData.diaryNo && (
+                   <div 
+                    className="bg-white p-1 rounded border border-primary/20 shadow-sm mb-1 cursor-zoom-in hover:shadow-md transition-shadow"
+                    onClick={() => handleQRClick(formData.diaryNo, "PENDING")}
+                   >
+                      <img 
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=40x40&data=${encodeURIComponent(`${window.location.origin}/public-track/${formData.diaryNo}/PENDING`)}`} 
+                        alt="QR"
+                        className="w-8 h-8"
+                      />
+                   </div>
+                )}
+              </div>
               <Input 
                 placeholder="Auto-assigned if empty" 
                 value={formData.diaryNo}
@@ -366,7 +390,7 @@ export default function BillDispatch() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-bold uppercase">Party / Vendor Name <span className="text-red-400">*</span></Label>
+              <Label className="text-[10px] font-bold uppercase">Party / Vendor Name *</Label>
               <Input 
                 placeholder="Enter party name" 
                 value={formData.partyName}
@@ -394,7 +418,7 @@ export default function BillDispatch() {
               />
             </div>
             <div className="space-y-2 pt-2">
-              <Label className="text-[10px] font-bold uppercase">Subject / Purpose <span className="text-red-400">*</span></Label>
+              <Label className="text-[10px] font-bold uppercase">Subject / Purpose *</Label>
               <Input 
                 placeholder="Short description of bill" 
                 value={formData.subject}
@@ -465,6 +489,7 @@ export default function BillDispatch() {
                       <TableHead className="text-xs uppercase font-bold">Diary No</TableHead>
                       <TableHead className="text-xs uppercase font-bold">Received Date</TableHead>
                       <TableHead className="text-xs uppercase font-bold">Party Name</TableHead>
+                      <TableHead className="text-xs uppercase font-bold text-center">QR</TableHead>
                       <TableHead className="text-xs uppercase font-bold text-center">Scan</TableHead>
                       <TableHead className="text-xs uppercase font-bold text-center">Track</TableHead>
                       <TableHead className="text-xs uppercase font-bold">Subject</TableHead>
@@ -479,6 +504,20 @@ export default function BillDispatch() {
                         <TableCell className="font-mono text-xs font-bold text-primary">{entry.diary_no}</TableCell>
                         <TableCell className="text-xs">{entry.received_date}</TableCell>
                         <TableCell className="font-semibold text-sm">{entry.party_name}</TableCell>
+                        <TableCell className="text-center">
+                          {entry.diary_no && (
+                             <div 
+                              className="cursor-zoom-in hover:scale-110 transition-transform"
+                              onClick={() => handleQRClick(entry.diary_no, entry.tracking_id || "N/A")}
+                             >
+                                <img 
+                                  src={`https://api.qrserver.com/v1/create-qr-code/?size=30x30&data=${encodeURIComponent(`${window.location.origin}/public-track/${entry.diary_no}/${entry.tracking_id}`)}`} 
+                                  alt="QR"
+                                  className="w-6 h-6 mx-auto opacity-70 group-hover:opacity-100 transition-opacity"
+                                />
+                             </div>
+                          )}
+                        </TableCell>
                         <TableCell className="text-center">
                           {entry.scan_url || entry.scan_url === photo ? (
                             <Button 
@@ -566,11 +605,13 @@ export default function BillDispatch() {
                   <SelectValue placeholder="Identify Section" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="medical">Medical Section</SelectItem>
-                  <SelectItem value="contractor">Contractor Section</SelectItem>
-                  <SelectItem value="security_deposit">Security Deposit Section</SelectItem>
-                  <SelectItem value="pol_bills">POL Bills Section</SelectItem>
-                  <SelectItem value="contingencies">Contingencies Section</SelectItem>
+                  <SelectItem value="cfo">CFO</SelectItem>
+                  <SelectItem value="cia">CIA</SelectItem>
+                  <SelectItem value="budget">BUDGET</SelectItem>
+                  <SelectItem value="pension">PENSION</SelectItem>
+                  <SelectItem value="fund">FUND</SelectItem>
+                  <SelectItem value="internal_audit_1">INTERNAL AUDIT-1</SelectItem>
+                  <SelectItem value="director_account">DIRECTOR ACCOUNT</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -622,6 +663,52 @@ export default function BillDispatch() {
                </Button>
             </a>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {/* QR Code Enlarged View */}
+      <Dialog open={qrDialogOpen} onOpenChange={setQrDialogOpen}>
+        <DialogContent className="sm:max-w-[450px] overflow-hidden p-0 border-none shadow-2xl rounded-2xl bg-gradient-to-br from-white to-zinc-50">
+          <div className="h-2 bg-primary w-full" />
+          <div className="p-8 flex flex-col items-center">
+            <DialogHeader className="w-full text-center space-y-2">
+              <DialogTitle className="text-2xl font-black tracking-tight text-primary">SCANNABLE QR TOKEN</DialogTitle>
+              <DialogDescription className="text-sm font-medium text-muted-foreground uppercase tracking-widest bg-primary/5 px-3 py-1 rounded-full w-fit mx-auto">
+                File Dispatch System
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="mt-8 relative group p-4 bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-primary/10">
+               <div className="absolute -inset-1 bg-gradient-to-r from-primary to-blue-500 rounded-3xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+               <img 
+                 src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(`${window.location.origin}/public-track/${selectedQR.diary}/${selectedQR.tracking}`)}`} 
+                 alt="Enlarged QR"
+                 className="w-[280px] h-[280px] relative rounded-xl"
+               />
+            </div>
+
+            <div className="mt-10 grid grid-cols-1 w-full gap-4">
+               <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10 flex flex-col items-center text-center">
+                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">CFO Diary Number</span>
+                  <span className="text-lg font-black font-mono text-zinc-800">{selectedQR.diary || 'N/A'}</span>
+               </div>
+               <div className="bg-blue-500/5 rounded-2xl p-4 border border-blue-500/10 flex flex-col items-center text-center">
+                  <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">Tracking ID</span>
+                  <span className="text-lg font-black font-mono text-zinc-800">{selectedQR.tracking || 'N/A'}</span>
+               </div>
+            </div>
+
+            <div className="mt-8 flex gap-3 w-full">
+               <Button variant="outline" className="flex-1 rounded-xl h-12 font-bold" onClick={() => setQrDialogOpen(false)}>Close Window</Button>
+               <Button className="flex-1 rounded-xl h-12 font-bold gap-2 animate-shimmer bg-primary shadow-lg shadow-primary/20">
+                 <Printer className="w-4 h-4" /> Print Token
+               </Button>
+            </div>
+            
+            <p className="mt-6 text-[10px] text-muted-foreground font-bold uppercase tracking-widest flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Verified Digital Record Token
+            </p>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
