@@ -38,14 +38,12 @@ const categories = [
     id: "book-section",
     label: "Book Section",
     items: [
-      { to: "/book-section/regular-employee", label: "Regular Employee", icon: Users },
-      { to: "/book-section/retired-employee", label: "Retired Employee", icon: Users },
       { to: "/book-section/emp-details", label: "Employee Details", icon: ListTree },
       { to: "/book-section/medical", label: "Medical Section", icon: Stethoscope },
       { to: "/book-section/contractor", label: "Contractor Section", icon: Briefcase },
       { to: "/book-section/security-deposit", label: "Security Deposit", icon: Lock },
       { to: "/book-section/pol-bills", label: "POL Bills", icon: FileText },
-      { to: "/book-section/contigencies", label: "Contingencies", icon: AlertCircle },
+      { to: "/book-section/contingencies", label: "Contingencies", icon: AlertCircle },
       { to: "/book-section/bill-dispatch", label: "Bill Dispatch", icon: ArrowLeftRight },
     ]
   }
@@ -83,7 +81,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="flex h-screen overflow-hidden bg-background relative">
       {/* Mobile Backdrop */}
       {mobileOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm"
           onClick={() => setMobileOpen(false)}
         />
@@ -110,11 +108,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             )}
           </div>
           {/* Mobile Close Button */}
-          <button 
+          <button
             className="lg:hidden text-muted-foreground hover:text-foreground"
             onClick={() => setMobileOpen(false)}
           >
-             <X className="w-5 h-5" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
@@ -156,7 +154,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       <span className="w-full text-center text-xs font-semibold">{category.label.charAt(0)}</span>
                     )}
                   </button>
-                  
+
                   {!collapsed && isOpen && (
                     <div className="flex flex-col bg-black/10 py-2 space-y-1">
                       {category.items.map((item) => (
@@ -208,8 +206,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <button
             onClick={signOut}
             className={cn(
-               "flex items-center gap-3 w-full px-3 py-2 rounded-md text-sm transition-colors text-rose-500 hover:bg-rose-500/10",
-               collapsed && "justify-center"
+              "flex items-center gap-3 w-full px-3 py-2 rounded-md text-sm transition-colors text-rose-500 hover:bg-rose-500/10",
+              collapsed && "justify-center"
             )}
             title="Logout"
           >
@@ -237,7 +235,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </>
             )}
           </button>
-          
+
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="hidden lg:flex items-center justify-center w-full p-2 rounded-md text-muted-foreground hover:bg-sidebar-accent transition-colors"
@@ -251,12 +249,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <main className="flex-1 flex flex-col overflow-auto w-full relative">
         {/* Mobile Header */}
         <div className="lg:hidden flex items-center p-4 border-b border-white/5 bg-sidebar/80 backdrop-blur-md sticky top-0 z-30">
-           <button onClick={() => setMobileOpen(true)} className="p-2 -ml-2 text-foreground/80 hover:text-primary">
-             <Menu className="w-6 h-6" />
-           </button>
-           <div className="ml-2 font-bold tracking-widest text-primary flex items-center gap-2">
-              <Shield className="w-5 h-5" /> FINLEDGER
-           </div>
+          <button onClick={() => setMobileOpen(true)} className="p-2 -ml-2 text-foreground/80 hover:text-primary">
+            <Menu className="w-6 h-6" />
+          </button>
+          <div className="ml-2 font-bold tracking-widest text-primary flex items-center gap-2">
+            <Shield className="w-5 h-5" /> FINLEDGER
+          </div>
         </div>
 
         <div ref={mainRef} className="p-4 md:p-6 w-full max-w-[1400px] mx-auto opacity-0 flex-1">{children}</div>

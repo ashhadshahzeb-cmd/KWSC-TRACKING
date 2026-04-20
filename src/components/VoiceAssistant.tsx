@@ -133,19 +133,19 @@ export default function VoiceAssistant() {
         .replace('hoon', '')
         .replace('hai', '')
         .trim();
-        
+
       if (!name) name = command.trim();
       name = name.charAt(0).toUpperCase() + name.slice(1);
-      
+
       setUserName(name);
       setConversationState('general');
       const reply = `Thank you ${name}! How can I help you today?`;
-      
+
       setTranscript(reply);
       toast.success(`Assistant: ${reply}`);
       speakResponse(reply);
       setShowTranscript(true);
-      
+
       // Keep it open for user to read
       setTimeout(() => stopListening(), 3000);
       return;
@@ -337,7 +337,7 @@ export default function VoiceAssistant() {
       isHandled = true; navigate('/book-section/security-deposit'); speakResponse("Security Deposit opened."); toast.success("Security Deposit opened."); stopListening();
     }
     else if (speech.includes('contigency') || speech.includes('contingencies') || speech.includes('emergency')) {
-      isHandled = true; navigate('/book-section/contigencies'); speakResponse("Contingencies opened."); toast.success("Contingencies opened."); stopListening();
+      isHandled = true; navigate('/book-section/contingencies'); speakResponse("Contingencies opened."); toast.success("Contingencies opened."); stopListening();
     }
     else if (speech.includes('cheque') || speech.includes('check')) {
       isHandled = true; navigate('/book-section/cheque-record'); speakResponse("Cheque record opened."); toast.success("Cheque record opened."); stopListening();
@@ -412,7 +412,7 @@ export default function VoiceAssistant() {
         </div>
 
         <div className="mt-3 flex gap-2 items-center">
-          <Input 
+          <Input
             value={textInput}
             onChange={e => setTextInput(e.target.value)}
             onKeyDown={e => {
@@ -421,12 +421,12 @@ export default function VoiceAssistant() {
                 setTextInput('');
               }
             }}
-            placeholder="Type response..." 
+            placeholder="Type response..."
             className="h-8 text-xs bg-black/40 border-primary/20 text-white"
           />
-          <Button 
-            size="sm" 
-            className="h-8 px-3 font-semibold" 
+          <Button
+            size="sm"
+            className="h-8 px-3 font-semibold"
             onClick={() => {
               handleVoiceCommand(textInput);
               setTextInput('');

@@ -13,14 +13,14 @@ import { toast } from "sonner";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-export default function Contigencies() {
+export default function Contingencies() {
   const navigate = useNavigate();
   const location = useLocation();
   const navState = location.state as any;
-  
+
   // Records State
   const [records, setRecords] = useState<any[]>([]);
-  
+
   // Form States
   const [serialNo, setSerialNo] = useState("");
   const [budgetYear, setBudgetYear] = useState("");
@@ -33,7 +33,7 @@ export default function Contigencies() {
   const [netAmount, setNetAmount] = useState("0");
   const [chequeNo, setChequeNo] = useState("");
   const [balanceAmount, setBalanceAmount] = useState("0");
-  
+
   const fetchRecords = async () => {
     try {
       const { data, error } = await supabase
@@ -41,7 +41,7 @@ export default function Contigencies() {
         .select('*')
         .order('created_at', { ascending: false })
         .limit(10);
-        
+
       if (error) throw error;
       if (data) setRecords(data);
     } catch (err) {
@@ -54,14 +54,14 @@ export default function Contigencies() {
 
     // Check if data is coming from Bill Dispatch (navState)
     if (navState) {
-        if (navState.vendorName || navState.contractorName) setVendorName(navState.vendorName || navState.contractorName);
-        if (navState.grossAmount) setGrossAmount(navState.grossAmount.toString());
-        if (navState.voucherNo) setVoucherNo(navState.voucherNo);
-        if (navState.partyCode) setPartyCode(navState.partyCode);
-        if (navState.workDescription) setDescription(navState.workDescription);
-        toast.success("Data imported from Bill Dispatch");
-        // Clear history state
-        window.history.replaceState({}, document.title);
+      if (navState.vendorName || navState.contractorName) setVendorName(navState.vendorName || navState.contractorName);
+      if (navState.grossAmount) setGrossAmount(navState.grossAmount.toString());
+      if (navState.voucherNo) setVoucherNo(navState.voucherNo);
+      if (navState.partyCode) setPartyCode(navState.partyCode);
+      if (navState.workDescription) setDescription(navState.workDescription);
+      toast.success("Data imported from Bill Dispatch");
+      // Clear history state
+      window.history.replaceState({}, document.title);
     }
   }, [navState]);
 
@@ -128,15 +128,15 @@ export default function Contigencies() {
       handleReset(true);
       setTimeout(() => {
         toast.info("Redirecting to Cheque Entries...");
-        navigate('/book-section/cheque-record', { 
-          state: { 
-            empName: vendorName, 
-            empNo: partyCode, 
+        navigate('/book-section/cheque-record', {
+          state: {
+            empName: vendorName,
+            empNo: partyCode,
             pensionNo: "",
             empStatus: "contingencies",
             totalAmount: grossAmount,
             remainingBalance: balanceAmount
-          } 
+          }
         });
       }, 1500);
     } catch (err: any) {
@@ -158,7 +158,7 @@ export default function Contigencies() {
         .maybeSingle();
 
       if (error) throw error;
-      
+
       const record = data as any;
       if (record) {
         setSerialNo(record.serial_no || "");
@@ -283,33 +283,33 @@ export default function Contigencies() {
         <div className="space-y-6">
           <Card className="glass-card overflow-hidden border-none p-6 space-y-6">
             <div className="space-y-2">
-               <Label className="text-[10px] bg-black text-white px-3 py-1.5 rounded-sm w-fit font-bold italic tracking-widest">IDENT VENDOR</Label>
-               <Select value={vendorType} onValueChange={setVendorType}>
-                 <SelectTrigger className="bg-muted/20 border-border/50 h-10">
-                   <SelectValue placeholder="Identify Vendor" />
-                 </SelectTrigger>
-                 <SelectContent>
+              <Label className="text-[10px] bg-black text-white px-3 py-1.5 rounded-sm w-fit font-bold italic tracking-widest">IDENT VENDOR</Label>
+              <Select value={vendorType} onValueChange={setVendorType}>
+                <SelectTrigger className="bg-muted/20 border-border/50 h-10">
+                  <SelectValue placeholder="Identify Vendor" />
+                </SelectTrigger>
+                <SelectContent>
                   <SelectItem value="medical">Medical</SelectItem>
                   <SelectItem value="contractor">Contractor</SelectItem>
                   <SelectItem value="security_deposit">Security Deposit</SelectItem>
                   <SelectItem value="contingencies">Contingencies</SelectItem>
                   <SelectItem value="pol_bills">POL Bills</SelectItem>
-                 </SelectContent>
-               </Select>
+                </SelectContent>
+              </Select>
             </div>
-            
+
             <div className="space-y-2">
-               <Label className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Cheque Statistics</Label>
-               <div className="space-y-3 p-3 bg-muted/20 rounded-md border border-border/50">
-                  <div className="space-y-1">
-                    <Label className="text-[9px] text-muted-foreground">Cheque Number</Label>
-                    <Input value={chequeNo} onChange={(e) => setChequeNo(e.target.value)} className="h-8 bg-background border-none text-xs font-mono" />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-[9px] text-muted-foreground">Balance Amount</Label>
-                    <Input value={balanceAmount} onChange={(e) => setBalanceAmount(e.target.value)} className="h-8 bg-background border-none text-xs font-mono" />
-                  </div>
-               </div>
+              <Label className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Cheque Statistics</Label>
+              <div className="space-y-3 p-3 bg-muted/20 rounded-md border border-border/50">
+                <div className="space-y-1">
+                  <Label className="text-[9px] text-muted-foreground">Cheque Number</Label>
+                  <Input value={chequeNo} onChange={(e) => setChequeNo(e.target.value)} className="h-8 bg-background border-none text-xs font-mono" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[9px] text-muted-foreground">Balance Amount</Label>
+                  <Input value={balanceAmount} onChange={(e) => setBalanceAmount(e.target.value)} className="h-8 bg-background border-none text-xs font-mono" />
+                </div>
+              </div>
             </div>
 
             <Button variant="destructive" size="sm" className="w-full gap-2 text-xs h-10">
@@ -318,35 +318,35 @@ export default function Contigencies() {
           </Card>
 
           <Card className="glass-card overflow-hidden border-none bg-primary/5 p-4 space-y-4">
-             <div className="flex items-center gap-2">
-               <Search className="w-4 h-4 text-primary" />
-               <Label className="text-xs font-bold text-rose-500 italic">SYSTEM LOOKUP</Label>
-             </div>
-             <Input 
-                placeholder="Enter reference..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-background/50 border-border/50 text-xs h-9" 
-             />
-             <RadioGroup value={searchType} onValueChange={setSearchType} className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem value="party" id="cont-party" className="border-primary" />
-                  <Label htmlFor="cont-party" className="text-[10px] font-bold italic text-muted-foreground">BY PARTY CODE</Label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem value="voucher" id="cont-voucher" className="border-primary" />
-                  <Label htmlFor="cont-voucher" className="text-[10px] font-bold italic text-muted-foreground">BY VOUCHER NO</Label>
-                </div>
-              </RadioGroup>
-             <Button 
-                onClick={handleSearch} 
-                disabled={isSearching}
-                variant="outline" 
-                className="w-full h-8 text-[10px] font-bold border-primary/20 text-primary hover:bg-primary/10"
-             >
-                {isSearching ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" /> : <Search className="w-3.5 h-3.5 mr-2" />}
-                PERFORM SEARCH
-             </Button>
+            <div className="flex items-center gap-2">
+              <Search className="w-4 h-4 text-primary" />
+              <Label className="text-xs font-bold text-rose-500 italic">SYSTEM LOOKUP</Label>
+            </div>
+            <Input
+              placeholder="Enter reference..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-background/50 border-border/50 text-xs h-9"
+            />
+            <RadioGroup value={searchType} onValueChange={setSearchType} className="space-y-2">
+              <div className="flex items-center gap-2">
+                <RadioGroupItem value="party" id="cont-party" className="border-primary" />
+                <Label htmlFor="cont-party" className="text-[10px] font-bold italic text-muted-foreground">BY PARTY CODE</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <RadioGroupItem value="voucher" id="cont-voucher" className="border-primary" />
+                <Label htmlFor="cont-voucher" className="text-[10px] font-bold italic text-muted-foreground">BY VOUCHER NO</Label>
+              </div>
+            </RadioGroup>
+            <Button
+              onClick={handleSearch}
+              disabled={isSearching}
+              variant="outline"
+              className="w-full h-8 text-[10px] font-bold border-primary/20 text-primary hover:bg-primary/10"
+            >
+              {isSearching ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" /> : <Search className="w-3.5 h-3.5 mr-2" />}
+              PERFORM SEARCH
+            </Button>
           </Card>
         </div>
       </div>

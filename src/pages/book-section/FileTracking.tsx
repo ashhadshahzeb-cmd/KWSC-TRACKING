@@ -65,10 +65,10 @@ export default function FileTracking() {
   // New Form State
   const [isSavingForm, setIsSavingForm] = useState(false);
   const [formData, setFormData] = useState({
-    cfo_diary_number: "",
+    cfo_diary_number: `CFO-${new Date().getFullYear()}-${String(Math.floor(1 + Math.random() * 9999)).padStart(4, '0')}`,
     inward_date: new Date().toISOString().split('T')[0],
     received_from: "",
-    receiving_number: `RC-${Math.floor(1000 + Math.random() * 9000)}`,
+    receiving_number: "",
     mainCategory: "",
     subCategory: "",
     subject: "",
@@ -449,11 +449,7 @@ export default function FileTracking() {
     { id: 'internal_audit_1', name: 'INTERNAL AUDIT-1' },
     { id: 'director_account', name: 'DIRECTOR ACCOUNT' },
     { id: 'director_finance', name: 'DIRECTOR FINANCE' },
-    { id: 'medical', name: 'MEDICAL' },
-    { id: 'contractor', name: 'CONTRACTOR' },
-    { id: 'security_deposit', name: 'SECURITY DEPOSIT' },
-    { id: 'pol_bills', name: 'POL BILLS' },
-    { id: 'contingencies', name: 'CONTINGENCIES' }
+    { id: 'director_it', name: 'DIRECTOR IT' }
   ];
 
   // Logic to filter incoming files for the current role
@@ -910,13 +906,11 @@ export default function FileTracking() {
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-6 border-t border-border/50">
               <div className="space-y-2">
-                <Label className="text-xs uppercase font-bold text-muted-foreground">CFO Office Diary No <span className="text-red-500">*</span></Label>
+                <Label className="text-xs uppercase font-bold text-muted-foreground">CFO Office Diary No <span className="text-emerald-500 text-[9px]">(Auto-Generated)</span></Label>
                 <Input
-                  placeholder="e.g. CFO-2024-001"
                   value={formData.cfo_diary_number}
-                  readOnly={currentRole !== 'cfo'}
-                  onChange={e => setFormData({ ...formData, cfo_diary_number: e.target.value })}
-                  className={`bg-muted/20 border-border/50 font-mono ${currentRole !== 'cfo' ? 'opacity-70 cursor-not-allowed' : ''}`}
+                  readOnly
+                  className="bg-muted/5 border-border/50 font-mono opacity-70 cursor-not-allowed font-bold text-primary"
                 />
               </div>
 
@@ -943,11 +937,12 @@ export default function FileTracking() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-xs uppercase font-bold text-muted-foreground">Receiving Number</Label>
+                <Label className="text-xs uppercase font-bold text-muted-foreground">Receiving Number <span className="text-red-500">*</span></Label>
                 <Input
+                  placeholder="Enter Receiving Number"
                   value={formData.receiving_number}
-                  readOnly
-                  className="bg-muted/5 border-border/50 font-mono opacity-70"
+                  onChange={e => setFormData({ ...formData, receiving_number: e.target.value })}
+                  className="bg-muted/20 border-border/50 font-mono border-primary/30"
                 />
               </div>
 
@@ -1130,11 +1125,7 @@ export default function FileTracking() {
                     <SelectItem value="internal_audit_1">INTERNAL AUDIT-1</SelectItem>
                     <SelectItem value="director_account">DIRECTOR ACCOUNT</SelectItem>
                     <SelectItem value="director_finance">DIRECTOR FINANCE</SelectItem>
-                    <SelectItem value="medical">MEDICAL</SelectItem>
-                    <SelectItem value="contractor">CONTRACTOR</SelectItem>
-                    <SelectItem value="security_deposit">SECURITY DEPOSIT</SelectItem>
-                    <SelectItem value="pol_bills">POL BILLS</SelectItem>
-                    <SelectItem value="contingencies">CONTINGENCIES</SelectItem>
+                    <SelectItem value="director_it">DIRECTOR IT</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

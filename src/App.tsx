@@ -22,7 +22,7 @@ import Medical from "./pages/book-section/Medical";
 import Contractor from "./pages/book-section/Contractor";
 import SecurityDeposit from "./pages/book-section/SecurityDeposit";
 import PolBills from "./pages/book-section/PolBills";
-import Contigencies from "./pages/book-section/Contigencies";
+import Contingencies from "./pages/book-section/Contingencies";
 import ChequeRecord from "./pages/book-section/ChequeRecord";
 import BillDispatch from "./pages/book-section/BillDispatch";
 import FileTracking from "./pages/book-section/FileTracking";
@@ -48,8 +48,8 @@ const App = () => (
               <Routes>
                 <Route path="/login" element={<AuthPage />} />
                 <Route path="/public-track/:diaryNo/:receivingNo" element={<PublicTracking />} />
-                <Route 
-                  path="/*" 
+                <Route
+                  path="/*"
                   element={
                     <ProtectedRoute>
                       <VoiceAssistant />
@@ -73,7 +73,7 @@ const App = () => (
                           <Route path="/book-section/contractor" element={<Contractor />} />
                           <Route path="/book-section/security-deposit" element={<SecurityDeposit />} />
                           <Route path="/book-section/pol-bills" element={<PolBills />} />
-                          <Route path="/book-section/contigencies" element={<Contigencies />} />
+                          <Route path="/book-section/contingencies" element={<Contingencies />} />
                           <Route path="/book-section/bill-dispatch" element={<BillDispatch />} />
                           <Route path="/book-section/file-tracking" element={<FileTracking />} />
                           <Route path="/book-section/cheque-record" element={<ChequeRecord />} />
@@ -84,7 +84,7 @@ const App = () => (
                           <Route path="/regular-employee/medical-case" element={<CpFund title="Medical Case" />} />
                           <Route path="/regular-employee/over-time" element={<CpFund title="Over Time" />} />
                           <Route path="/regular-employee/tada" element={<CpFund title="TADA" />} />
-                          
+
                           <Route path="/retired-employee/fund" element={<CpFund title="Fund" />} />
                           <Route path="/retired-employee/lpr" element={<CpFund title="LPR" />} />
                           <Route path="/retired-employee/pension-gratuity" element={<CpFund title="Pension/Gratuity" />} />
@@ -92,12 +92,12 @@ const App = () => (
                           <Route path="/retired-employee/financial-assist" element={<CpFund title="Financial Assist" />} />
                           <Route path="/retired-employee/funeral-charges" element={<CpFund title="Funeral Charges" />} />
                           <Route path="/retired-employee/group-insurance" element={<CpFund title="Group Insurance" />} />
-                          
+
                           <Route path="*" element={<NotFound />} />
                         </Routes>
                       </Layout>
                     </ProtectedRoute>
-                  } 
+                  }
                 />
               </Routes>
             </BrowserRouter>
