@@ -2219,7 +2219,7 @@ export default function FileTracking() {
             <div className="space-y-4">
               <div>
                 <p className="text-[10px] font-bold uppercase text-gray-500">Date Received in Finance</p>
-                <p className="text-base font-bold">{selectedBill?.received_date}</p>
+                <p className="text-base font-bold">{new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
               </div>
               <div>
                 <p className="text-[10px] font-bold uppercase text-gray-500">Amount Claimed</p>
@@ -2321,6 +2321,15 @@ export default function FileTracking() {
                           <div>
                             <span className="text-[9px] font-bold text-zinc-400 uppercase">Subject</span>
                             <p className="text-xs font-bold text-zinc-800 leading-tight">{ticket?.subject || "Subject Details"}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0">
+                            <Calendar className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <span className="text-[9px] font-bold text-zinc-400 uppercase">Entry Date</span>
+                            <p className="text-xs font-black text-amber-600 tracking-tight">{new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
                           </div>
                         </div>
                         <div className="flex items-start gap-3">
